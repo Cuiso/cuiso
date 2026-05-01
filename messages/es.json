@@ -16,14 +16,14 @@
   },
   "hero": {
     "greeting": "Hola, soy",
-    "rolesLine": "IA generativa, automatización en la nube y productos escalables. Hackathons, datos y aprendizaje continuo.",
+    "rolesLine": "IA generativa, cloud y productos escalables.",
     "ctaContact": "Contacto",
     "ctaCv": "Descargar CV",
     "cvAria": "Descargar curriculum en PDF"
   },
   "about": {
     "title": "Sobre mí",
-    "body": "Profesional apasionado por la tecnología y la innovación: ingeniero de sistemas que diseña soluciones de IA generativa y automatización en la nube. Me motiva construir productos escalables que generen valor. Participo en hackathons, exploro nuevas formas de aplicar la tecnología y aprendo en el proceso. Voluntariado y liderazgo técnico en proyectos web y chatbots en la comunidad FIIS (Centro Cultural Núcleo)."
+    "body": "Ingeniero de sistemas enfocado en IA generativa y cloud. Diseño productos escalables, compito en hackathons y lidero voluntariados técnicos en la comunidad FIIS."
   },
   "skills": {
     "title": "Habilidades",

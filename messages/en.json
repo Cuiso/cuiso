@@ -16,14 +16,14 @@
   },
   "hero": {
     "greeting": "Hi, I’m",
-    "rolesLine": "Generative AI, cloud automation, and scalable products. Hackathons, data, and continuous learning.",
+    "rolesLine": "Generative AI, cloud, and scalable products.",
     "ctaContact": "Contact",
     "ctaCv": "Download CV",
     "cvAria": "Download resume as PDF"
   },
   "about": {
     "title": "About",
-    "body": "I’m passionate about technology and innovation: a systems engineer building generative AI and cloud automation. I like designing scalable products that deliver real value. I compete in hackathons, explore new ways to apply tech, and learn as I go. I’ve also led volunteer engineering for web and chatbot projects in the FIIS community (Centro Cultural Núcleo)."
+    "body": "Systems engineer focused on generative AI and cloud. I design scalable products, compete in hackathons, and lead volunteer tech projects in the FIIS community."
   },
   "skills": {
     "title": "Skills",
