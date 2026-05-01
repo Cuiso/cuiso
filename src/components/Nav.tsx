@@ -52,7 +52,7 @@ export function Nav() {
     );
 
   return (
-    <header className="sticky top-4 z-50 px-4 md:px-6">
+    <header className="fixed top-4 left-0 right-0 z-50 px-4 md:px-6">
       <nav
         className="mx-auto flex max-w-6xl items-center gap-3 rounded-full border border-ink/10 bg-surface-card/90 px-3 py-2 shadow-[var(--shadow-nav)] backdrop-blur-sm dark:border-ink/20"
         aria-label="Main"

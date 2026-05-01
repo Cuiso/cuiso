@@ -6,8 +6,26 @@ import { SkeuoAnchor } from "@/components/skeuo/Anchor";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 const ROLES = ["AI", "Cloud", "Software", "Design"] as const;
-const LUIS_CHARS = ["L", "u", "i", "s"] as const;
-const CUIS_CHARS = ["c", "u", "i", "s"] as const;
+const ANGELO_CHARS = ["A", "n", "g", "e", "l", "o"] as const;
+const RODRIGUEZ_CHARS = [
+  "R",
+  "o",
+  "d",
+  "r",
+  "i",
+  "g",
+  "u",
+  "e",
+  "z",
+] as const;
+// Source (serif) and target (mono) characters for the scramble morph.
+// Same length keeps slots aligned 1:1.
+const NAME_SLOTS = [
+  { from: "L", to: "c" },
+  { from: "u", to: "u" },
+  { from: "i", to: "i" },
+  { from: "s", to: "s" },
+] as const;
 
 interface Props {
   greeting: string;
@@ -32,22 +50,16 @@ export function HeroClient({
   const pinWrapRef = useRef<HTMLDivElement>(null);
   const greetRef = useRef<HTMLParagraphElement>(null);
 
-  // Layer A — serif/ink
-  const layerARef = useRef<HTMLSpanElement>(null);
-  const luisSerifRef = useRef<HTMLSpanElement>(null);
-  const luisCharRefs = useRef<Array<HTMLSpanElement | null>>([]);
-  const angeloRef = useRef<HTMLSpanElement>(null);
-  const rodriguezRef = useRef<HTMLSpanElement>(null);
+  // Name line — single layer, scramble per slot
+  const nameWrapRef = useRef<HTMLSpanElement>(null);
+  const nameSlotRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const angeloWrapRef = useRef<HTMLSpanElement>(null);
+  const angeloCharRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const rodriguezWrapRef = useRef<HTMLSpanElement>(null);
+  const rodriguezCharRefs = useRef<Array<HTMLSpanElement | null>>([]);
 
-  // Layer B — mono/primary (Cuiso)
-  const cuisRef = useRef<HTMLSpanElement>(null);
-  const cuisCharRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const oWrapRef = useRef<HTMLSpanElement>(null);
-  const oCharRef = useRef<HTMLSpanElement>(null);
-  const oHaloRef = useRef<SVGCircleElement>(null);
-  const oHaloOuterRef = useRef<SVGCircleElement>(null);
 
-  const progressBarRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLParagraphElement>(null);
   const roleTextRef = useRef<HTMLSpanElement>(null);
   const caretRef = useRef<HTMLSpanElement>(null);
@@ -68,17 +80,21 @@ export function HeroClient({
           const ctaBtns = ctasRef.current
             ? Array.from(ctasRef.current.children)
             : [];
-          const luisChars = luisCharRefs.current.filter(
+          const nameSlots = nameSlotRefs.current.filter(
             (el): el is HTMLSpanElement => el !== null,
           );
-          const cuisChars = cuisCharRefs.current.filter(
+          const angeloChars = angeloCharRefs.current.filter(
             (el): el is HTMLSpanElement => el !== null,
           );
-          const formalWords = [
-            luisSerifRef.current,
-            angeloRef.current,
-            rodriguezRef.current,
-          ].filter(Boolean) as HTMLSpanElement[];
+          const rodriguezChars = rodriguezCharRefs.current.filter(
+            (el): el is HTMLSpanElement => el !== null,
+          );
+
+          // Reset slot text to source characters (serif/L u i s).
+          nameSlots.forEach((el, i) => {
+            const slot = NAME_SLOTS[i];
+            if (slot) el.textContent = slot.from;
+          });
 
           if (reduced) {
             gsap.set(
@@ -90,19 +106,22 @@ export function HeroClient({
               ],
               { autoAlpha: 1, y: 0 },
             );
-            gsap.set(layerARef.current, { autoAlpha: 0 });
-            gsap.set([angeloRef.current, rodriguezRef.current], {
-              autoAlpha: 0,
-              width: 0,
-              paddingRight: 0,
+            // Show final state: mono "Cuiso"
+            nameSlots.forEach((el, i) => {
+              const slot = NAME_SLOTS[i];
+              if (slot) el.textContent = slot.to;
             });
-            gsap.set([cuisRef.current, oWrapRef.current], { autoAlpha: 1 });
-            gsap.set([...cuisChars, oCharRef.current], {
+            gsap.set(nameSlots, {
               autoAlpha: 1,
-              y: 0,
-              scale: 1,
-              rotationX: 0,
+              fontFamily: "var(--font-mono, ui-monospace, monospace)",
+              color: "var(--color-primary)",
             });
+            gsap.set([angeloWrapRef.current, rodriguezWrapRef.current], {
+              autoAlpha: 0,
+              display: "none",
+            });
+            gsap.set(nameWrapRef.current, { paddingRight: 0 });
+            gsap.set(oWrapRef.current, { autoAlpha: 1 });
             return;
           }
 
@@ -112,40 +131,25 @@ export function HeroClient({
             y: 20,
           });
           gsap.set(ctaBtns, { autoAlpha: 0, y: 16 });
-          gsap.set(formalWords, {
+
+          // Name line: serif chars start hidden, drop in
+          gsap.set(nameSlots, {
             autoAlpha: 0,
-            y: 60,
+            y: 50,
             rotationX: -55,
-            filter: "blur(8px)",
+            filter: "blur(6px)",
             transformOrigin: "left center",
           });
-          // Layer B chars start hidden, slightly above and rotated forward
-          gsap.set(cuisChars, {
+          // Angelo / Rodriguez chars start hidden, drop in per char
+          gsap.set([...angeloChars, ...rodriguezChars], {
             autoAlpha: 0,
-            y: -30,
-            rotationX: 60,
-            scale: 0.85,
-            filter: "blur(4px)",
-            transformOrigin: "50% 50% -20",
+            y: 50,
+            rotationX: -55,
+            filter: "blur(6px)",
+            transformOrigin: "left center",
           });
-          // o starts hidden
+
           gsap.set(oWrapRef.current, { autoAlpha: 0 });
-          gsap.set(oCharRef.current, {
-            scale: 0.4,
-            y: -18,
-            filter: "blur(8px)",
-            transformOrigin: "50% 50%",
-          });
-          if (oHaloRef.current) {
-            gsap.set(oHaloRef.current, {
-              attr: { r: 30, "stroke-opacity": 0, "stroke-width": 6 },
-            });
-          }
-          if (oHaloOuterRef.current) {
-            gsap.set(oHaloOuterRef.current, {
-              attr: { r: 30, "stroke-opacity": 0, "stroke-width": 4 },
-            });
-          }
 
           // ── Entrance timeline ─────────────────────────────────────────
           const entrance = gsap.timeline({
@@ -159,26 +163,50 @@ export function HeroClient({
               ease: "power3.out",
             })
             .to(
-              formalWords,
+              nameSlots,
               {
                 autoAlpha: 1,
                 y: 0,
                 rotationX: 0,
                 filter: "blur(0px)",
-                duration: 0.95,
-                stagger: 0.09,
+                duration: 0.85,
+                stagger: 0.05,
               },
               "-=0.2",
             )
             .to(
+              angeloChars,
+              {
+                autoAlpha: 1,
+                y: 0,
+                rotationX: 0,
+                filter: "blur(0px)",
+                duration: 0.7,
+                stagger: 0.04,
+              },
+              "-=0.65",
+            )
+            .to(
+              rodriguezChars,
+              {
+                autoAlpha: 1,
+                y: 0,
+                rotationX: 0,
+                filter: "blur(0px)",
+                duration: 0.7,
+                stagger: 0.035,
+              },
+              "-=0.55",
+            )
+            .to(
               handleRef.current,
               { autoAlpha: 1, y: 0, duration: 0.55, ease: "power3.out" },
-              "-=0.55",
+              "-=0.45",
             )
             .to(
               descRef.current,
               { autoAlpha: 1, y: 0, duration: 0.55, ease: "power3.out" },
-              "-=0.4",
+              "-=0.35",
             )
             .to(
               ctaBtns,
@@ -253,179 +281,140 @@ export function HeroClient({
             gsap.delayedCall(2.2, cycle);
           });
 
-          // ── Scroll-linked morph timeline ──────────────────────────────
-          const collapseVars = {
+          // ── Per-letter dissolve for Angelo / Rodriguez ────────────────
+          const dissolveCharVars = {
             autoAlpha: 0,
-            width: 0,
-            paddingRight: 0,
-            scale: 0.6,
-            rotationY: -30,
-            letterSpacing: "-0.05em",
+            y: -22,
+            rotationX: 60,
+            scale: 1.05,
             filter: "blur(6px)",
-            duration: 0.95,
-            ease: "power3.inOut",
-            transformOrigin: "left center",
+            ease: "power2.in",
+            transformOrigin: "50% 50% -10",
           } as const;
 
+          // ── Scroll-linked morph timeline ──────────────────────────────
           const morphTl = gsap.timeline({
             scrollTrigger: {
               trigger: pinWrapRef.current,
               start: "top top",
-              end: "+=2200",
+              end: "+=2400",
               pin: pinWrapRef.current,
               pinSpacing: true,
               scrub: 1,
               anticipatePin: 1,
-              onUpdate: (self) => {
-                if (progressBarRef.current) {
-                  gsap.set(progressBarRef.current, { scaleX: self.progress });
-                }
-              },
             },
           });
 
-          // Stage 0→1: Angelo collapses
-          if (angeloRef.current) {
-            morphTl.to(angeloRef.current, collapseVars, 0);
-          }
-          // Stage 1→2: Rodriguez collapses
-          if (rodriguezRef.current) {
-            morphTl.to(rodriguezRef.current, collapseVars, 1);
-          }
-
-          // Stage 2→3: Luis (serif/ink) → Cuis (mono/primary)
-          // Same-slot synchronized flip: serif chars rotate UP and away while
-          // mono chars rotate IN from above. Tightly staggered (L→c first).
-          if (luisChars.length) {
+          // Stage 0 → 1: Angelo dissolves letter by letter, then wrapper collapses
+          if (angeloChars.length) {
             morphTl.to(
-              luisChars,
+              angeloChars,
               {
-                rotationX: -90,
-                y: 28,
-                scale: 1.05,
-                autoAlpha: 0,
-                filter: "blur(4px)",
-                duration: 0.55,
-                stagger: 0.05,
-                ease: "power3.in",
-                transformOrigin: "50% 50% -20",
+                ...dissolveCharVars,
+                duration: 0.5,
+                stagger: 0.06,
               },
-              2,
+              0,
             );
           }
-          if (cuisChars.length) {
+          if (angeloWrapRef.current) {
             morphTl.to(
-              cuisChars,
+              angeloWrapRef.current,
               {
-                rotationX: 0,
-                y: 0,
-                scale: 1,
-                autoAlpha: 1,
-                filter: "blur(0px)",
-                duration: 0.55,
-                stagger: 0.05,
-                ease: "power3.out",
+                width: 0,
+                paddingRight: 0,
+                duration: 0.4,
+                ease: "power2.inOut",
               },
-              2.2,
+              0.7,
             );
           }
 
-          // Stage 3 → 3.4: "Cuis" breathing (pause beat ~250ms)
-          if (cuisRef.current) {
+          // Stage 1 → 2: Rodriguez dissolves letter by letter, then collapses
+          if (rodriguezChars.length) {
             morphTl.to(
-              cuisRef.current,
+              rodriguezChars,
               {
-                scale: 1.025,
-                duration: 0.18,
-                ease: "sine.inOut",
-                transformOrigin: "left center",
+                ...dissolveCharVars,
+                duration: 0.5,
+                stagger: 0.045,
               },
-              3.0,
+              1.1,
             );
+          }
+          if (rodriguezWrapRef.current) {
             morphTl.to(
-              cuisRef.current,
-              { scale: 1, duration: 0.22, ease: "sine.inOut" },
-              3.18,
+              rodriguezWrapRef.current,
+              {
+                width: 0,
+                paddingRight: 0,
+                duration: 0.4,
+                ease: "power2.inOut",
+              },
+              1.95,
             );
           }
 
-          // Stage 3.4 → 4: "o" hero reveal (distinct mechanism: drop-in + halo rings)
+          // Stage 2 → 3: Luis → Cuis scramble per slot
+          // Collapse the trailing padding so "cuis" sits flush with the "o".
+          if (nameWrapRef.current) {
+            morphTl.to(
+              nameWrapRef.current,
+              {
+                paddingRight: 0,
+                duration: 0.5,
+                ease: "power2.inOut",
+              },
+              2.4,
+            );
+          }
+          // Each slot scrambles through random characters and lands on the
+          // mono target character. Color + font transition simultaneously.
+          nameSlots.forEach((slot, i) => {
+            const target = NAME_SLOTS[i];
+            if (!target) return;
+            const start = 2.4 + i * 0.12;
+            morphTl.to(
+              slot,
+              {
+                duration: 0.65,
+                ease: "none",
+                scrambleText: {
+                  text: target.to,
+                  chars: "upperAndLowerCase",
+                  speed: 0.6,
+                  revealDelay: 0,
+                },
+              },
+              start,
+            );
+            morphTl.to(
+              slot,
+              {
+                color: "var(--color-primary)",
+                fontFamily:
+                  "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)",
+                fontWeight: 700,
+                duration: 0.65,
+                ease: "power2.inOut",
+              },
+              start,
+            );
+          });
+
+          // Stage 3 → 3.4: subtle settle (no aggressive bounce)
+          morphTl.fromTo(
+            nameSlots,
+            { scale: 1.04 },
+            { scale: 1, duration: 0.3, ease: "power2.out", stagger: 0.02 },
+            3.0,
+          );
+
+          // Stage 3.4: "o" appears in place — simple fade-in, no splash
           morphTl.to(
             oWrapRef.current,
-            { autoAlpha: 1, duration: 0.05 },
+            { autoAlpha: 1, duration: 0.4, ease: "power2.out" },
             3.4,
-          );
-          morphTl.to(
-            oCharRef.current,
-            {
-              scale: 1,
-              y: 0,
-              filter: "blur(0px)",
-              duration: 0.5,
-              ease: "back.out(2.4)",
-            },
-            3.42,
-          );
-          // Halo ring — inner (faster, brighter)
-          if (oHaloRef.current) {
-            morphTl.to(
-              oHaloRef.current,
-              {
-                attr: { r: 75, "stroke-opacity": 0.7, "stroke-width": 3 },
-                duration: 0.22,
-                ease: "power2.out",
-              },
-              3.55,
-            );
-            morphTl.to(
-              oHaloRef.current,
-              {
-                attr: { r: 130, "stroke-opacity": 0, "stroke-width": 1 },
-                duration: 0.3,
-                ease: "power2.out",
-              },
-              3.77,
-            );
-          }
-          // Halo ring — outer (slower, wider ripple)
-          if (oHaloOuterRef.current) {
-            morphTl.to(
-              oHaloOuterRef.current,
-              {
-                attr: { r: 100, "stroke-opacity": 0.45, "stroke-width": 2 },
-                duration: 0.3,
-                ease: "power2.out",
-              },
-              3.65,
-            );
-            morphTl.to(
-              oHaloOuterRef.current,
-              {
-                attr: { r: 180, "stroke-opacity": 0, "stroke-width": 1 },
-                duration: 0.35,
-                ease: "power2.out",
-              },
-              3.95,
-            );
-          }
-          // Settle micro-bounce on "o"
-          morphTl.to(
-            oCharRef.current,
-            {
-              scale: 1.08,
-              duration: 0.08,
-              ease: "power2.out",
-            },
-            3.9,
-          );
-          morphTl.to(
-            oCharRef.current,
-            {
-              scale: 1,
-              duration: 0.18,
-              ease: "back.out(3)",
-            },
-            3.98,
           );
 
           if (typeof document !== "undefined" && "fonts" in document) {
@@ -444,23 +433,12 @@ export function HeroClient({
       ref={sectionRef}
       id="hero"
       aria-label={fullName}
-      className="scroll-mt-28 border-b border-ink/10 dark:border-ink/15"
+      className="scroll-mt-28"
     >
       <div
         ref={pinWrapRef}
         className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-20 md:py-28"
       >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-0 right-0 top-0 h-[3px] bg-ink/5"
-        >
-          <div
-            ref={progressBarRef}
-            className="h-full origin-left bg-gradient-to-r from-primary via-primary to-secondary"
-            style={{ transform: "scaleX(0)" }}
-          />
-        </div>
-
         <div className="mx-auto w-full max-w-6xl px-4 md:px-6">
           <p
             ref={greetRef}
@@ -470,63 +448,44 @@ export function HeroClient({
           </p>
 
           <h1
-            className="mt-4 relative"
+            className="mt-4 relative font-serif font-semibold tracking-tight text-ink text-[clamp(2rem,7.5vw,5.5rem)] leading-[1.1]"
             style={{ perspective: "1400px" }}
           >
-            {/* Layer A — formal name (serif/ink) */}
             <span
-              ref={layerARef}
               aria-hidden="true"
-              className="font-serif font-semibold tracking-tight text-ink text-[clamp(2rem,7.5vw,5.5rem)] leading-[1.1] flex items-baseline whitespace-nowrap will-change-transform"
+              className="flex items-baseline whitespace-nowrap"
             >
+              {/* Slot-shared name: serif "Luis" scrambles into mono primary "cuis" */}
               <span
-                ref={luisSerifRef}
-                className="inline-flex items-baseline will-change-transform"
+                ref={nameWrapRef}
+                className="inline-flex items-baseline"
                 style={{ paddingRight: "0.28em" }}
               >
-                {LUIS_CHARS.map((ch, i) => (
+                {NAME_SLOTS.map((slot, i) => (
                   <span
                     key={i}
                     ref={(el) => {
-                      luisCharRefs.current[i] = el;
+                      nameSlotRefs.current[i] = el;
                     }}
                     className="inline-block will-change-transform"
                     style={{ transformStyle: "preserve-3d" }}
                   >
-                    {ch}
+                    {slot.from}
                   </span>
                 ))}
               </span>
-              <span
-                ref={angeloRef}
-                className="inline-block whitespace-nowrap overflow-hidden will-change-transform"
-                style={{ paddingRight: "0.28em" }}
-              >
-                Angelo
-              </span>
-              <span
-                ref={rodriguezRef}
-                className="inline-block whitespace-nowrap overflow-hidden will-change-transform"
-                style={{ paddingRight: "0.28em" }}
-              >
-                Rodriguez
-              </span>
-            </span>
 
-            {/* Layer B — handle (mono/primary), absolute overlay */}
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute left-0 top-0 font-mono font-bold tracking-tight text-primary text-[clamp(2rem,7.5vw,5.5rem)] leading-[1.1] flex items-baseline whitespace-nowrap"
-            >
+              {/* Angelo — letter by letter */}
               <span
-                ref={cuisRef}
-                className="inline-flex items-baseline will-change-transform"
+                ref={angeloWrapRef}
+                className="inline-flex items-baseline whitespace-nowrap will-change-transform"
+                style={{ paddingRight: "0.28em" }}
               >
-                {CUIS_CHARS.map((ch, i) => (
+                {ANGELO_CHARS.map((ch, i) => (
                   <span
                     key={i}
                     ref={(el) => {
-                      cuisCharRefs.current[i] = el;
+                      angeloCharRefs.current[i] = el;
                     }}
                     className="inline-block will-change-transform"
                     style={{ transformStyle: "preserve-3d" }}
@@ -535,44 +494,33 @@ export function HeroClient({
                   </span>
                 ))}
               </span>
+
+              {/* Rodriguez — letter by letter */}
+              <span
+                ref={rodriguezWrapRef}
+                className="inline-flex items-baseline whitespace-nowrap will-change-transform"
+                style={{ paddingRight: "0.28em" }}
+              >
+                {RODRIGUEZ_CHARS.map((ch, i) => (
+                  <span
+                    key={i}
+                    ref={(el) => {
+                      rodriguezCharRefs.current[i] = el;
+                    }}
+                    className="inline-block will-change-transform"
+                    style={{ transformStyle: "preserve-3d" }}
+                  >
+                    {ch}
+                  </span>
+                ))}
+              </span>
+
+              {/* The "o" — appears in place at the end of "cuis" */}
               <span
                 ref={oWrapRef}
-                className="relative inline-block will-change-transform"
+                className="inline-block font-mono font-bold text-primary will-change-transform"
               >
-                <svg
-                  viewBox="0 0 200 200"
-                  preserveAspectRatio="xMidYMid meet"
-                  className="absolute left-1/2 top-1/2 z-0 h-[280%] w-[280%] -translate-x-1/2 -translate-y-1/2 overflow-visible pointer-events-none"
-                  aria-hidden="true"
-                >
-                  <circle
-                    ref={oHaloOuterRef}
-                    cx="100"
-                    cy="100"
-                    r="30"
-                    fill="none"
-                    stroke="var(--color-primary)"
-                    strokeWidth="4"
-                    strokeOpacity="0"
-                  />
-                  <circle
-                    ref={oHaloRef}
-                    cx="100"
-                    cy="100"
-                    r="30"
-                    fill="none"
-                    stroke="var(--color-primary)"
-                    strokeWidth="6"
-                    strokeOpacity="0"
-                  />
-                </svg>
-                <span
-                  ref={oCharRef}
-                  className="relative z-10 inline-block will-change-transform"
-                  style={{ transformStyle: "preserve-3d" }}
-                >
-                  o
-                </span>
+                o
               </span>
             </span>
           </h1>

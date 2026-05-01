@@ -1,7 +1,8 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, useGSAP);
 
-export { gsap, ScrollTrigger, useGSAP };
+export { gsap, ScrollTrigger, ScrambleTextPlugin, useGSAP };
