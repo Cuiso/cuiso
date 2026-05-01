@@ -209,8 +209,8 @@ export function HeroClient({
             gsap.set(nameSlots, {
               autoAlpha: 1,
               fontFamily: "var(--font-mono, ui-monospace, monospace)",
-              color: "var(--color-primary)",
             });
+            nameSlots.forEach((el) => el.classList.add("text-primary"));
             gsap.set([angeloWrapRef.current, rodriguezWrapRef.current], {
               autoAlpha: 0,
               display: "none",
@@ -510,12 +510,13 @@ export function HeroClient({
             morphTl.to(
               slot,
               {
-                color: "var(--color-primary)",
                 fontFamily:
                   "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)",
                 fontWeight: 700,
                 duration: MORPH_DUR.scramble,
                 ease: "power2.inOut",
+                onComplete: () => slot.classList.add("text-primary"),
+                onReverseComplete: () => slot.classList.remove("text-primary"),
               },
               start,
             );
