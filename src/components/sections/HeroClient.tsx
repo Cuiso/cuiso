@@ -18,14 +18,108 @@ const RODRIGUEZ_CHARS = [
   "e",
   "z",
 ] as const;
-// Source (serif) and target (mono) characters for the scramble morph.
-// Same length keeps slots aligned 1:1.
+
+/** Serif → mono slots; equal length for ScrambleText. */
 const NAME_SLOTS = [
   { from: "L", to: "c" },
   { from: "u", to: "u" },
   { from: "i", to: "i" },
   { from: "s", to: "s" },
 ] as const;
+
+const NAME_GAP_EM = "0.28em";
+
+const MORPH_SCROLL = {
+  end: "+=2400",
+  scrub: 1,
+  anticipatePin: 1,
+} as const;
+
+/**
+ * First surname tween must start after t=0 so ScrollTrigger at progress 0
+ * does not apply the morph "from" state (autoAlpha 1) during the intro.
+ */
+const MORPH_IDLE_PAD = 0.02;
+
+/** Gap after a wrap finishes (before the next surname’s letter block). */
+const MORPH_PHASE_GAP = 0.1;
+
+/**
+ * Start wrap width slightly before the letter stagger ends so scrub reverse isn’t
+ * “empty box expands, then letters pop in”.
+ */
+const MORPH_WRAP_OVERLAP_INTO_LETTERS = 0.2;
+
+/**
+ * Per-letter fade: `each` ≈ `duration` so letters don’t all dissolve at once (scrub).
+ * Both surnames: strict sequence (no inter-letter overlap — smoother scrub reverse).
+ */
+const MORPH_LETTER_ANGELO = { duration: 0.22, each: 0.22 } as const;
+const MORPH_LETTER_RODRIGUEZ = { duration: 0.2, each: 0.2 } as const;
+
+/** Deltas after `namePadding` start (unchanged feel vs previous timeline). */
+const MORPH_SETTLE_AFTER_NAME_PADDING = 0.65;
+const MORPH_MONO_O_AFTER_SETTLE = 0.35;
+
+const MORPH_SCRAMBLE_SLOT_STAGGER = 0.12;
+
+const MORPH_DUR = {
+  wrapCollapse: 0.35,
+  namePadding: 0.5,
+  scramble: 0.65,
+  settle: 0.3,
+  monoO: 0.4,
+} as const;
+
+function letterStaggerSpan(
+  charCount: number,
+  each: number,
+  duration: number,
+) {
+  if (charCount <= 1) return duration;
+  return (charCount - 1) * each + duration;
+}
+
+function buildMorphTimes() {
+  const w = MORPH_DUR.wrapCollapse;
+  const g = MORPH_PHASE_GAP;
+  const idle = MORPH_IDLE_PAD;
+  const overlap = MORPH_WRAP_OVERLAP_INTO_LETTERS;
+
+  const angSpan = letterStaggerSpan(
+    ANGELO_CHARS.length,
+    MORPH_LETTER_ANGELO.each,
+    MORPH_LETTER_ANGELO.duration,
+  );
+  const tAngeloChars = idle;
+  const tAngeloWrap = idle + angSpan - overlap;
+  const afterAngeloWrap = tAngeloWrap + w;
+
+  const rodSpan = letterStaggerSpan(
+    RODRIGUEZ_CHARS.length,
+    MORPH_LETTER_RODRIGUEZ.each,
+    MORPH_LETTER_RODRIGUEZ.duration,
+  );
+  const tRodriguezChars = afterAngeloWrap + g;
+  const tRodriguezWrap = tRodriguezChars + rodSpan - overlap;
+  const afterRodWrap = tRodriguezWrap + w;
+
+  const tNamePadding = afterRodWrap + g;
+  const tSettle = tNamePadding + MORPH_SETTLE_AFTER_NAME_PADDING;
+  const tMonoO = tSettle + MORPH_MONO_O_AFTER_SETTLE;
+
+  return {
+    tAngeloChars,
+    tAngeloWrap,
+    tRodriguezChars,
+    tRodriguezWrap,
+    tNamePadding,
+    tSettle,
+    tMonoO,
+  };
+}
+
+const MORPH_T = buildMorphTimes();
 
 interface Props {
   greeting: string;
@@ -50,7 +144,6 @@ export function HeroClient({
   const pinWrapRef = useRef<HTMLDivElement>(null);
   const greetRef = useRef<HTMLParagraphElement>(null);
 
-  // Name line — single layer, scramble per slot
   const nameWrapRef = useRef<HTMLSpanElement>(null);
   const nameSlotRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const angeloWrapRef = useRef<HTMLSpanElement>(null);
@@ -90,7 +183,6 @@ export function HeroClient({
             (el): el is HTMLSpanElement => el !== null,
           );
 
-          // Reset slot text to source characters (serif/L u i s).
           nameSlots.forEach((el, i) => {
             const slot = NAME_SLOTS[i];
             if (slot) el.textContent = slot.from;
@@ -106,7 +198,6 @@ export function HeroClient({
               ],
               { autoAlpha: 1, y: 0 },
             );
-            // Show final state: mono "Cuiso"
             nameSlots.forEach((el, i) => {
               const slot = NAME_SLOTS[i];
               if (slot) el.textContent = slot.to;
@@ -125,14 +216,12 @@ export function HeroClient({
             return;
           }
 
-          // ── Initial state ──────────────────────────────────────────────
           gsap.set([greetRef.current, handleRef.current, descRef.current], {
             autoAlpha: 0,
             y: 20,
           });
           gsap.set(ctaBtns, { autoAlpha: 0, y: 16 });
 
-          // Name line: serif chars start hidden, drop in
           gsap.set(nameSlots, {
             autoAlpha: 0,
             y: 50,
@@ -140,15 +229,12 @@ export function HeroClient({
             filter: "blur(6px)",
             transformOrigin: "left center",
           });
-          // Angelo / Rodriguez chars start invisible. Pure opacity fade keeps
-          // the entrance and the scroll-reverse visually identical.
           gsap.set([...angeloChars, ...rodriguezChars], {
             autoAlpha: 0,
           });
 
           gsap.set(oWrapRef.current, { autoAlpha: 0 });
 
-          // ── Entrance timeline ─────────────────────────────────────────
           const entrance = gsap.timeline({
             defaults: { ease: "expo.out" },
           });
@@ -213,7 +299,6 @@ export function HeroClient({
               "-=0.3",
             );
 
-          // ── Caret blink ───────────────────────────────────────────────
           if (caretRef.current) {
             gsap.to(caretRef.current, {
               autoAlpha: 0,
@@ -224,7 +309,6 @@ export function HeroClient({
             });
           }
 
-          // ── Role typing carousel ──────────────────────────────────────
           entrance.call(() => {
             const el = roleTextRef.current;
             if (!el) return;
@@ -274,17 +358,10 @@ export function HeroClient({
             gsap.delayedCall(2.2, cycle);
           });
 
-          // ── Per-letter dissolve for Angelo / Rodriguez ────────────────
-          // Pure opacity fade per letter. Identical visual whether played
-          // forward (scroll down) or reversed (scroll up / page entrance).
-
-          // Measured px widths — avoids width:"auto" in scrubbed fromTo (bad reverse).
           let rodriguezWrapFullWidth = 0;
           let angeloWrapFullWidth = 0;
 
-          // Until the intro finishes, morph must stay at progress 0. Otherwise
-          // ScrollTrigger (e.g. scroll restoration) can run the Angelo dissolve;
-          // stagger from "end" then leaves only "o" visibly at full opacity.
+          // Until true, morph progress stays 0 (avoids ST + scroll restoration during intro).
           let entranceFinished = false;
 
           function captureSurnameWrapWidths(morphTimeline: gsap.core.Timeline) {
@@ -299,16 +376,41 @@ export function HeroClient({
             morphTimeline.progress(saved);
           }
 
-          // ── Scroll-linked morph timeline ──────────────────────────────
+          function addMorphWrapCollapse(
+            tl: gsap.core.Timeline,
+            wrap: HTMLSpanElement,
+            getFullWidth: () => number,
+            position: number,
+          ) {
+            tl.fromTo(
+              wrap,
+              {
+                width: () => {
+                  const w = getFullWidth();
+                  return w > 0 ? w : wrap.offsetWidth;
+                },
+                paddingRight: NAME_GAP_EM,
+              },
+              {
+                width: 0,
+                paddingRight: 0,
+                duration: MORPH_DUR.wrapCollapse,
+                ease: "power2.inOut",
+                immediateRender: false,
+              },
+              position,
+            );
+          }
+
           const morphTl = gsap.timeline({
             scrollTrigger: {
               trigger: pinWrapRef.current,
               start: "top top",
-              end: "+=2400",
+              end: MORPH_SCROLL.end,
               pin: pinWrapRef.current,
               pinSpacing: true,
-              scrub: 1,
-              anticipatePin: 1,
+              scrub: MORPH_SCROLL.scrub,
+              anticipatePin: MORPH_SCROLL.anticipatePin,
               invalidateOnRefresh: true,
               onRefresh: () => captureSurnameWrapWidths(morphTl),
               onUpdate: () => {
@@ -323,110 +425,74 @@ export function HeroClient({
             ScrollTrigger.refresh();
           });
 
-          // Tiny offset so morph does not apply "from" (autoAlpha: 1) at timeline 0.
-          // Otherwise ScrollTrigger at scroll start forces Angelo letters visible and
-          // wipes entrance gsap.set before the intro finishes (notably the final "o").
-          const morphIdlePad = 0.02;
-
-          // Stage 0 → 1: Angelo first — wrap collapse pulls Rodriguez next to Luis
-          // ("Luis Angelo Rodriguez" → "Luis Rodriguez" with Rodriguez sliding left).
-          // Stagger from end = right-to-left fade.
           if (angeloChars.length) {
             morphTl.fromTo(
               angeloChars,
               { autoAlpha: 1 },
               {
                 autoAlpha: 0,
-                duration: 0.5,
-                stagger: { each: 0.06, from: "end" },
+                duration: MORPH_LETTER_ANGELO.duration,
+                stagger: { each: MORPH_LETTER_ANGELO.each, from: "end" },
                 ease: "none",
                 immediateRender: false,
               },
-              morphIdlePad,
+              MORPH_T.tAngeloChars,
             );
           }
           if (angeloWrapRef.current) {
-            morphTl.fromTo(
+            addMorphWrapCollapse(
+              morphTl,
               angeloWrapRef.current,
-              {
-                width: () =>
-                  angeloWrapFullWidth > 0
-                    ? angeloWrapFullWidth
-                    : (angeloWrapRef.current?.offsetWidth ?? 0),
-                paddingRight: "0.28em",
-              },
-              {
-                width: 0,
-                paddingRight: 0,
-                duration: 0.35,
-                ease: "power2.inOut",
-                immediateRender: false,
-              },
-              0.95,
+              () => angeloWrapFullWidth,
+              MORPH_T.tAngeloWrap,
             );
           }
 
-          // Stage 1 → 2: Rodriguez dissolves, then collapses (after Angelo is gone)
           if (rodriguezChars.length) {
             morphTl.fromTo(
               rodriguezChars,
               { autoAlpha: 1 },
               {
                 autoAlpha: 0,
-                duration: 0.5,
-                stagger: { each: 0.045, from: "end" },
+                duration: MORPH_LETTER_RODRIGUEZ.duration,
+                stagger: { each: MORPH_LETTER_RODRIGUEZ.each, from: "end" },
                 ease: "none",
                 immediateRender: false,
               },
-              1.4,
+              MORPH_T.tRodriguezChars,
             );
           }
           if (rodriguezWrapRef.current) {
-            morphTl.fromTo(
+            addMorphWrapCollapse(
+              morphTl,
               rodriguezWrapRef.current,
-              {
-                width: () =>
-                  rodriguezWrapFullWidth > 0
-                    ? rodriguezWrapFullWidth
-                    : (rodriguezWrapRef.current?.offsetWidth ?? 0),
-                paddingRight: "0.28em",
-              },
-              {
-                width: 0,
-                paddingRight: 0,
-                duration: 0.35,
-                ease: "power2.inOut",
-                immediateRender: false,
-              },
-              2.3,
+              () => rodriguezWrapFullWidth,
+              MORPH_T.tRodriguezWrap,
             );
           }
 
-          // Stage 2 → 3: Luis → Cuis scramble per slot
-          // Collapse the trailing padding so "cuis" sits flush with the "o".
           if (nameWrapRef.current) {
             morphTl.fromTo(
               nameWrapRef.current,
-              { paddingRight: "0.28em" },
+              { paddingRight: NAME_GAP_EM },
               {
                 paddingRight: 0,
-                duration: 0.5,
+                duration: MORPH_DUR.namePadding,
                 ease: "power2.inOut",
                 immediateRender: false,
               },
-              2.75,
+              MORPH_T.tNamePadding,
             );
           }
-          // Each slot scrambles through random characters and lands on the
-          // mono target character. Color + font transition simultaneously.
           nameSlots.forEach((slot, i) => {
             const target = NAME_SLOTS[i];
             if (!target) return;
-            const start = 2.75 + i * 0.12;
+            const start =
+              MORPH_T.tNamePadding + i * MORPH_SCRAMBLE_SLOT_STAGGER;
             morphTl.to(
               slot,
               {
-                duration: 0.65,
+                duration: MORPH_DUR.scramble,
                 ease: "none",
                 scrambleText: {
                   text: target.to,
@@ -444,33 +510,35 @@ export function HeroClient({
                 fontFamily:
                   "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)",
                 fontWeight: 700,
-                duration: 0.65,
+                duration: MORPH_DUR.scramble,
                 ease: "power2.inOut",
               },
               start,
             );
           });
 
-          // Stage 3 → 3.4: subtle settle (no aggressive bounce)
           morphTl.fromTo(
             nameSlots,
             { scale: 1.04 },
-            { scale: 1, duration: 0.3, ease: "power2.out", stagger: 0.02 },
-            3.4,
+            {
+              scale: 1,
+              duration: MORPH_DUR.settle,
+              ease: "power2.out",
+              stagger: 0.02,
+            },
+            MORPH_T.tSettle,
           );
 
-          // Stage 3.4: "o" appears in place — fromTo keeps autoAlpha 0 before this
-          // segment (avoids stray "Luis…o" after refresh / ST scrub at progress 0).
           morphTl.fromTo(
             oWrapRef.current,
             { autoAlpha: 0 },
             {
               autoAlpha: 1,
-              duration: 0.4,
+              duration: MORPH_DUR.monoO,
               ease: "power2.out",
               immediateRender: false,
             },
-            3.75,
+            MORPH_T.tMonoO,
           );
 
           if (typeof document !== "undefined" && "fonts" in document) {
@@ -511,11 +579,10 @@ export function HeroClient({
               aria-hidden="true"
               className="flex items-baseline whitespace-nowrap"
             >
-              {/* Slot-shared name: serif "Luis" scrambles into mono primary "cuis" */}
               <span
                 ref={nameWrapRef}
                 className="inline-flex items-baseline"
-                style={{ paddingRight: "0.28em" }}
+                style={{ paddingRight: NAME_GAP_EM }}
               >
                 {NAME_SLOTS.map((slot, i) => (
                   <span
@@ -531,12 +598,11 @@ export function HeroClient({
                 ))}
               </span>
 
-              {/* Angelo — letter by letter */}
               <span
                 ref={angeloWrapRef}
                 className="inline-flex items-baseline overflow-hidden whitespace-nowrap will-change-transform"
                 style={{
-                  paddingRight: "0.28em",
+                  paddingRight: NAME_GAP_EM,
                   clipPath: "inset(-100% 0 -100% 0)",
                 }}
               >
@@ -554,12 +620,11 @@ export function HeroClient({
                 ))}
               </span>
 
-              {/* Rodriguez — letter by letter */}
               <span
                 ref={rodriguezWrapRef}
                 className="inline-flex items-baseline overflow-hidden whitespace-nowrap will-change-transform"
                 style={{
-                  paddingRight: "0.28em",
+                  paddingRight: NAME_GAP_EM,
                   clipPath: "inset(-100% 0 -100% 0)",
                 }}
               >
@@ -577,7 +642,6 @@ export function HeroClient({
                 ))}
               </span>
 
-              {/* The "o" — appears in place at the end of "cuis" */}
               <span
                 ref={oWrapRef}
                 className="inline-block opacity-0 font-mono font-bold text-primary will-change-transform"
