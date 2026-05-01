@@ -4,7 +4,7 @@ const labels: Record<
   Locale,
   { ai: string; cloud: string; software: string; design: string }
 > = {
-  es: { ai: "IA", cloud: "Cloud", software: "Software", design: "Diseño" },
+  es: { ai: "IA", cloud: "Cloud", software: "Software", design: "Design" },
   en: { ai: "AI", cloud: "Cloud", software: "Software", design: "Design" },
 };
 

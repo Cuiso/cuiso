@@ -27,10 +27,10 @@
   },
   "skills": {
     "title": "Habilidades",
-    "ai": "IA",
+    "ai": "AI",
     "cloud": "Cloud",
     "software": "Software",
-    "design": "Diseño"
+    "design": "Design"
   },
   "projects": {
     "title": "Proyectos",
@@ -55,7 +55,7 @@
   },
   "blog": {
     "title": "Blog",
-    "subtitle": "Notas técnicas y diseño.",
+    "subtitle": "Notas técnicas y design.",
     "back": "Volver al inicio",
     "read": "Leer",
     "empty": "Aún no hay artículos en este idioma.",

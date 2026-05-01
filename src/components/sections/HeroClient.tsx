@@ -5,7 +5,6 @@ import { ChevronRight } from "lucide-react";
 import { SkeuoAnchor } from "@/components/skeuo/Anchor";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
-const ROLES = ["AI", "Cloud", "Software", "Design"] as const;
 const ANGELO_CHARS = ["A", "n", "g", "e", "l", "o"] as const;
 const RODRIGUEZ_CHARS = [
   "R",
@@ -31,7 +30,8 @@ const NAME_GAP_EM = "0.28em";
 
 const MORPH_SCROLL = {
   end: "+=2400",
-  scrub: 1,
+  /** Seconds for the timeline to ease toward the scroll position; higher = softer on fast wheel. */
+  scrub: 2,
   anticipatePin: 1,
 } as const;
 
@@ -56,6 +56,8 @@ const MORPH_WRAP_OVERLAP_INTO_LETTERS = 0.2;
  */
 const MORPH_LETTER_ANGELO = { duration: 0.22, each: 0.22 } as const;
 const MORPH_LETTER_RODRIGUEZ = { duration: 0.2, each: 0.2 } as const;
+/** Ease for Angelo/Rodriguez letter fades and wrap width (softer than linear under scrub). */
+const MORPH_SURNAME_EASE = "sine.inOut";
 
 /** Deltas after `namePadding` start (unchanged feel vs previous timeline). */
 const MORPH_SETTLE_AFTER_NAME_PADDING = 0.65;
@@ -125,6 +127,7 @@ interface Props {
   greeting: string;
   fullName: string;
   handle: string;
+  roleLabels: string[];
   rolesLine: string;
   ctaContact: string;
   ctaCv: string;
@@ -135,6 +138,7 @@ export function HeroClient({
   greeting,
   fullName,
   handle,
+  roleLabels,
   rolesLine,
   ctaContact,
   ctaCv,
@@ -342,7 +346,7 @@ export function HeroClient({
               return tl;
             };
             const cycle = () => {
-              const next = (idx + 1) % ROLES.length;
+              const next = (idx + 1) % roleLabels.length;
               gsap
                 .timeline({
                   onComplete: () => {
@@ -351,10 +355,10 @@ export function HeroClient({
                   },
                 })
                 .add(eraseWord())
-                .add(typeWord(ROLES[next]));
+                .add(typeWord(roleLabels[next]));
             };
             el.textContent = "";
-            typeWord(ROLES[0]);
+            typeWord(roleLabels[0] ?? "");
             gsap.delayedCall(2.2, cycle);
           });
 
@@ -395,7 +399,7 @@ export function HeroClient({
                 width: 0,
                 paddingRight: 0,
                 duration: MORPH_DUR.wrapCollapse,
-                ease: "power2.inOut",
+                ease: MORPH_SURNAME_EASE,
                 immediateRender: false,
               },
               position,
@@ -433,7 +437,7 @@ export function HeroClient({
                 autoAlpha: 0,
                 duration: MORPH_LETTER_ANGELO.duration,
                 stagger: { each: MORPH_LETTER_ANGELO.each, from: "end" },
-                ease: "none",
+                ease: MORPH_SURNAME_EASE,
                 immediateRender: false,
               },
               MORPH_T.tAngeloChars,
@@ -456,7 +460,7 @@ export function HeroClient({
                 autoAlpha: 0,
                 duration: MORPH_LETTER_RODRIGUEZ.duration,
                 stagger: { each: MORPH_LETTER_RODRIGUEZ.each, from: "end" },
-                ease: "none",
+                ease: MORPH_SURNAME_EASE,
                 immediateRender: false,
               },
               MORPH_T.tRodriguezChars,
@@ -549,7 +553,7 @@ export function HeroClient({
 
       return () => mm.revert();
     },
-    { scope: sectionRef },
+    { scope: sectionRef, dependencies: [roleLabels] },
   );
 
   return (
@@ -572,7 +576,7 @@ export function HeroClient({
           </p>
 
           <h1
-            className="mt-4 relative font-serif font-semibold tracking-tight text-ink text-[clamp(2rem,7.5vw,5.5rem)] leading-[1.1]"
+            className="mt-4 relative font-serif font-semibold tracking-tight text-ink text-[clamp(2rem,7.5vw,5.5rem)] leading-[1.2]"
             style={{ perspective: "1400px" }}
           >
             <span
@@ -603,6 +607,7 @@ export function HeroClient({
                 className="inline-flex items-baseline overflow-hidden whitespace-nowrap will-change-transform"
                 style={{
                   paddingRight: NAME_GAP_EM,
+                  paddingBottom: "0.18em",
                   clipPath: "inset(-100% 0 -100% 0)",
                 }}
               >
@@ -625,6 +630,7 @@ export function HeroClient({
                 className="inline-flex items-baseline overflow-hidden whitespace-nowrap will-change-transform"
                 style={{
                   paddingRight: NAME_GAP_EM,
+                  paddingBottom: "0.18em",
                   clipPath: "inset(-100% 0 -100% 0)",
                 }}
               >
@@ -662,9 +668,7 @@ export function HeroClient({
             <span className="text-ink/80">role</span>
             <span className="text-muted/60">=</span>
             <span className="text-secondary">&quot;</span>
-            <span ref={roleTextRef} className="text-secondary">
-              AI
-            </span>
+            <span ref={roleTextRef} className="text-secondary" />
             <span className="text-secondary">&quot;</span>
             <span
               ref={caretRef}
