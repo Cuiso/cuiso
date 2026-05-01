@@ -7,6 +7,7 @@ import { ProjectsSection } from "@/components/sections/Projects";
 import { ExperienceSection } from "@/components/sections/Experience";
 import { EducationSection } from "@/components/sections/Education";
 import { ContactSection } from "@/components/sections/Contact";
+import { SectionReveal } from "@/components/SectionReveal";
 
 export default function HomePage() {
   return (
@@ -14,12 +15,24 @@ export default function HomePage() {
       <Nav />
       <main>
         <HeroSection />
-        <AboutSection />
-        <SkillsSection />
-        <ProjectsSection />
-        <ExperienceSection />
-        <EducationSection />
-        <ContactSection />
+        <SectionReveal>
+          <AboutSection />
+        </SectionReveal>
+        <SectionReveal>
+          <SkillsSection />
+        </SectionReveal>
+        <SectionReveal>
+          <ProjectsSection />
+        </SectionReveal>
+        <SectionReveal>
+          <ExperienceSection />
+        </SectionReveal>
+        <SectionReveal>
+          <EducationSection />
+        </SectionReveal>
+        <SectionReveal>
+          <ContactSection />
+        </SectionReveal>
       </main>
       <Footer />
     </>

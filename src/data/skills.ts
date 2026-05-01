@@ -15,25 +15,40 @@ export function getSkillGroups(locale: Locale) {
       key: "ai" as const,
       title: l.ai,
       items: [
-        "LLM apps · RAG",
-        "Prompt / eval loops",
-        "Python · TypeScript",
+        "Python · PyTorch · TensorFlow · LangChain · LangGraph · Pinecone",
+        "LLM · RAG · Whisper / WhisperX · Docling · OCR (Tesseract)",
+        "Visión por computadora · evaluación de prompts",
       ],
     },
     {
       key: "cloud" as const,
       title: l.cloud,
-      items: ["AWS / GCP basics", "Containers", "CI/CD"],
+      items: [
+        "AWS · Azure · GCP",
+        "Docker · Terraform · CI/CD · Spark (ETL)",
+      ],
     },
     {
       key: "software" as const,
       title: l.software,
-      items: ["Next.js · React", "APIs · Postgres", "Testing"],
+      items: [
+        "Java · C++ · JavaScript · TypeScript",
+        "FastAPI · Flask · Express.js · Next.js · React · Angular",
+        "MySQL · PostgreSQL · MongoDB · SQLite",
+      ],
     },
     {
       key: "design" as const,
       title: l.design,
-      items: ["Design systems", "UX writing", "Prototyping"],
+      items: [
+        locale === "es"
+          ? "UX/UI (proyectos web y producto)"
+          : "UX/UI (web and product work)",
+        locale === "es"
+          ? "Prototipado y escritura de experiencia"
+          : "Prototyping and UX writing",
+        locale === "es" ? "Inglés C1" : "English C1",
+      ],
     },
   ];
 }

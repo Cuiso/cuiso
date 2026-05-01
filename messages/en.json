@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Cuiso — Luis Rodriguez",
-    "description": "AI, Cloud, Software, and Design Engineer. Portfolio of Luis Angelo Rodriguez Parreño."
+    "title": "Cuiso — Luis Angelo Rodriguez",
+    "description": "Systems engineer (UNI). Generative AI, cloud, and automation. AI Engineer at ENTEL; formerly PI-TEC and Yape."
   },
   "nav": {
     "about": "About",
@@ -16,14 +16,14 @@
   },
   "hero": {
     "greeting": "Hi, I’m",
-    "rolesLine": "I build products across AI, cloud, software, and design.",
+    "rolesLine": "Generative AI, cloud automation, and scalable products. Hackathons, data, and continuous learning.",
     "ctaContact": "Contact",
     "ctaCv": "Download CV",
     "cvAria": "Download resume as PDF"
   },
   "about": {
     "title": "About",
-    "body": "Systems-focused engineer; I work on applied AI, cloud platforms, software engineering, and product design. I care about interfaces that feel solid, clear, and honest."
+    "body": "I’m passionate about technology and innovation: a systems engineer building generative AI and cloud automation. I like designing scalable products that deliver real value. I compete in hackathons, explore new ways to apply tech, and learn as I go. I’ve also led volunteer engineering for web and chatbot projects in the FIIS community (Centro Cultural Núcleo)."
   },
   "skills": {
     "title": "Skills",

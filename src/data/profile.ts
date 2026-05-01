@@ -1,6 +1,6 @@
 export const profile = {
   handle: "Cuiso",
-  name: "Luis Angelo Rodriguez Parreño",
+  name: "Luis Angelo Rodriguez",
   roles: [
     "AI Engineer",
     "Cloud Engineer",
