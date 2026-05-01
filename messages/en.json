@@ -67,6 +67,8 @@
     "toggle": "Toggle theme"
   },
   "locale": {
-    "switch": "Language"
+    "switch": "Language",
+    "es": "Spanish",
+    "en": "English"
   }
 }
