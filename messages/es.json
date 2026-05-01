@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "title": "Cuiso — Luis Rodriguez",
+    "description": "AI, Cloud, Software y Design Engineer. Portfolio de Luis Angelo Rodriguez Parreño."
+  },
+  "nav": {
+    "about": "Sobre mí",
+    "skills": "Habilidades",
+    "projects": "Proyectos",
+    "experience": "Experiencia",
+    "education": "Educación",
+    "contact": "Contacto",
+    "blog": "Blog",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
+  },
+  "hero": {
+    "greeting": "Hola, soy",
+    "rolesLine": "Construyo productos con IA, nube, software y diseño.",
+    "ctaContact": "Contacto",
+    "ctaCv": "Descargar CV",
+    "cvAria": "Descargar curriculum en PDF"
+  },
+  "about": {
+    "title": "Sobre mí",
+    "body": "Ingeniero orientado a sistemas; me especializo en IA aplicada, plataformas cloud, ingeniería de software y diseño de producto. Me gusta que las interfaces se sientan sólidas, claras y honestas."
+  },
+  "skills": {
+    "title": "Habilidades",
+    "ai": "IA",
+    "cloud": "Cloud",
+    "software": "Software",
+    "design": "Diseño"
+  },
+  "projects": {
+    "title": "Proyectos",
+    "view": "Ver",
+    "source": "Código"
+  },
+  "experience": {
+    "title": "Experiencia",
+    "present": "Presente"
+  },
+  "education": {
+    "title": "Educación"
+  },
+  "contact": {
+    "title": "Contacto",
+    "email": "Correo",
+    "whatsapp": "WhatsApp",
+    "hint": "Respuesta típica en 24–48 h."
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados."
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Notas técnicas y diseño.",
+    "back": "Volver al inicio",
+    "read": "Leer",
+    "empty": "Aún no hay artículos en este idioma.",
+    "posted": "Publicado"
+  },
+  "theme": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "toggle": "Cambiar tema"
+  },
+  "locale": {
+    "switch": "Idioma"
+  }
+}
