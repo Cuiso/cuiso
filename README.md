@@ -1,25 +1,17 @@
-# Cuiso — portfolio
+<div align="center">
 
-Portfolio personal (Next.js 16) con UI **skeuomórfica suave**: superficies elevadas, huecos inset y gradientes sutiles sobre gris. Tema claro/oscuro. Idiomas: **es** (por defecto), **en**.
+# Cuiso
 
-## Scripts
+**Luis Angelo Rodriguez** · `@cuiso`
 
-- `pnpm dev` — servidor de desarrollo
-- `pnpm build` / `pnpm start` — producción
-- `pnpm lint` — ESLint
-- `pnpm design:lint` — validar [`DESIGN.md`](./DESIGN.md) con `@google/design.md`
+*Ingeniero de sistemas · IA generativa, cloud y automatización*
 
-## Contenido
+</div>
 
-- **Textos / i18n:** [`messages/es.json`](./messages/es.json), [`messages/en.json`](./messages/en.json)
-- **Datos estructurados:** [`src/data/`](./src/data)
-- **Blog (MDX):** [`content/blog/`](./content/blog) — `locale: es` o `locale: en` en el front matter
-- **CV:** sustituye [`public/cv.pdf`](./public/cv.pdf) por tu PDF real (ahora es un marcador de posición)
+---
 
-## Entorno
+**En GitHub** comparto código y experimentos donde cruzo **IA generativa**, **nube**, **automatización** y **producto** de punta a punta. Egresado de sistemas (UNI); hoy **AI Engineer en ENTEL**; antes **PI-TEC** y **Yape**. Me enganchan los **hackathons**, trabajar con **datos** y el **aprendizaje continuo**.
 
-- `NEXT_PUBLIC_SITE_URL` — URL canónica para metadata (opcional en dev)
+**Este repositorio** es el código de **mi portfolio personal**: una sola web con **UI skeuomórfica suave** (elevado, inset, grises con acentos), **tema claro u oscuro** y textos en **español e inglés**. Ahí está todo lo público del sitio: sobre mí, habilidades (AI · Cloud · Software · Design), proyectos, trayectoria, educación, blog, contacto y descarga de CV.
 
-## Sistema de diseño
-
-[DESIGN.md](./DESIGN.md) sigue el formato [Google DESIGN.md](https://github.com/google-labs-code/design.md) (tokens + narrativa).
+[LinkedIn](https://www.linkedin.com/in/luis-rodriguez-cuiso)
