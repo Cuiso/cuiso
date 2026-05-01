@@ -140,13 +140,10 @@ export function HeroClient({
             filter: "blur(6px)",
             transformOrigin: "left center",
           });
-          // Angelo / Rodriguez chars start hidden, drop in per char
+          // Angelo / Rodriguez chars start invisible. Pure opacity fade keeps
+          // the entrance and the scroll-reverse visually identical.
           gsap.set([...angeloChars, ...rodriguezChars], {
             autoAlpha: 0,
-            y: 50,
-            rotationX: -55,
-            filter: "blur(6px)",
-            transformOrigin: "left center",
           });
 
           gsap.set(oWrapRef.current, { autoAlpha: 0 });
@@ -178,11 +175,9 @@ export function HeroClient({
               angeloChars,
               {
                 autoAlpha: 1,
-                y: 0,
-                rotationX: 0,
-                filter: "blur(0px)",
-                duration: 0.7,
-                stagger: 0.04,
+                duration: 0.5,
+                stagger: 0.05,
+                ease: "none",
               },
               "-=0.65",
             )
@@ -190,11 +185,9 @@ export function HeroClient({
               rodriguezChars,
               {
                 autoAlpha: 1,
-                y: 0,
-                rotationX: 0,
-                filter: "blur(0px)",
-                duration: 0.7,
-                stagger: 0.035,
+                duration: 0.5,
+                stagger: 0.04,
+                ease: "none",
               },
               "-=0.55",
             )
@@ -282,15 +275,29 @@ export function HeroClient({
           });
 
           // ── Per-letter dissolve for Angelo / Rodriguez ────────────────
-          const dissolveCharVars = {
-            autoAlpha: 0,
-            y: -22,
-            rotationX: 60,
-            scale: 1.05,
-            filter: "blur(6px)",
-            ease: "power2.in",
-            transformOrigin: "50% 50% -10",
-          } as const;
+          // Pure opacity fade per letter. Identical visual whether played
+          // forward (scroll down) or reversed (scroll up / page entrance).
+
+          // Measured px widths — avoids width:"auto" in scrubbed fromTo (bad reverse).
+          let rodriguezWrapFullWidth = 0;
+          let angeloWrapFullWidth = 0;
+
+          // Until the intro finishes, morph must stay at progress 0. Otherwise
+          // ScrollTrigger (e.g. scroll restoration) can run the Angelo dissolve;
+          // stagger from "end" then leaves only "o" visibly at full opacity.
+          let entranceFinished = false;
+
+          function captureSurnameWrapWidths(morphTimeline: gsap.core.Timeline) {
+            const rod = rodriguezWrapRef.current;
+            const ang = angeloWrapRef.current;
+            if (!rod || !ang) return;
+            const saved = entranceFinished ? morphTimeline.progress() : 0;
+            morphTimeline.progress(0);
+            gsap.set([rod, ang], { clearProps: "width,maxWidth" });
+            rodriguezWrapFullWidth = rod.offsetWidth;
+            angeloWrapFullWidth = ang.offsetWidth;
+            morphTimeline.progress(saved);
+          }
 
           // ── Scroll-linked morph timeline ──────────────────────────────
           const morphTl = gsap.timeline({
@@ -302,70 +309,112 @@ export function HeroClient({
               pinSpacing: true,
               scrub: 1,
               anticipatePin: 1,
+              invalidateOnRefresh: true,
+              onRefresh: () => captureSurnameWrapWidths(morphTl),
+              onUpdate: () => {
+                if (!entranceFinished) morphTl.progress(0);
+              },
             },
           });
 
-          // Stage 0 → 1: Angelo dissolves letter by letter, then wrapper collapses
+          entrance.eventCallback("onComplete", () => {
+            entranceFinished = true;
+            captureSurnameWrapWidths(morphTl);
+            ScrollTrigger.refresh();
+          });
+
+          // Tiny offset so morph does not apply "from" (autoAlpha: 1) at timeline 0.
+          // Otherwise ScrollTrigger at scroll start forces Angelo letters visible and
+          // wipes entrance gsap.set before the intro finishes (notably the final "o").
+          const morphIdlePad = 0.02;
+
+          // Stage 0 → 1: Angelo first — wrap collapse pulls Rodriguez next to Luis
+          // ("Luis Angelo Rodriguez" → "Luis Rodriguez" with Rodriguez sliding left).
+          // Stagger from end = right-to-left fade.
           if (angeloChars.length) {
-            morphTl.to(
+            morphTl.fromTo(
               angeloChars,
+              { autoAlpha: 1 },
               {
-                ...dissolveCharVars,
+                autoAlpha: 0,
                 duration: 0.5,
-                stagger: 0.06,
+                stagger: { each: 0.06, from: "end" },
+                ease: "none",
+                immediateRender: false,
               },
-              0,
+              morphIdlePad,
             );
           }
           if (angeloWrapRef.current) {
-            morphTl.to(
+            morphTl.fromTo(
               angeloWrapRef.current,
+              {
+                width: () =>
+                  angeloWrapFullWidth > 0
+                    ? angeloWrapFullWidth
+                    : (angeloWrapRef.current?.offsetWidth ?? 0),
+                paddingRight: "0.28em",
+              },
               {
                 width: 0,
                 paddingRight: 0,
-                duration: 0.4,
+                duration: 0.35,
                 ease: "power2.inOut",
+                immediateRender: false,
               },
-              0.7,
+              0.95,
             );
           }
 
-          // Stage 1 → 2: Rodriguez dissolves letter by letter, then collapses
+          // Stage 1 → 2: Rodriguez dissolves, then collapses (after Angelo is gone)
           if (rodriguezChars.length) {
-            morphTl.to(
+            morphTl.fromTo(
               rodriguezChars,
+              { autoAlpha: 1 },
               {
-                ...dissolveCharVars,
+                autoAlpha: 0,
                 duration: 0.5,
-                stagger: 0.045,
+                stagger: { each: 0.045, from: "end" },
+                ease: "none",
+                immediateRender: false,
               },
-              1.1,
+              1.4,
             );
           }
           if (rodriguezWrapRef.current) {
-            morphTl.to(
+            morphTl.fromTo(
               rodriguezWrapRef.current,
+              {
+                width: () =>
+                  rodriguezWrapFullWidth > 0
+                    ? rodriguezWrapFullWidth
+                    : (rodriguezWrapRef.current?.offsetWidth ?? 0),
+                paddingRight: "0.28em",
+              },
               {
                 width: 0,
                 paddingRight: 0,
-                duration: 0.4,
+                duration: 0.35,
                 ease: "power2.inOut",
+                immediateRender: false,
               },
-              1.95,
+              2.3,
             );
           }
 
           // Stage 2 → 3: Luis → Cuis scramble per slot
           // Collapse the trailing padding so "cuis" sits flush with the "o".
           if (nameWrapRef.current) {
-            morphTl.to(
+            morphTl.fromTo(
               nameWrapRef.current,
+              { paddingRight: "0.28em" },
               {
                 paddingRight: 0,
                 duration: 0.5,
                 ease: "power2.inOut",
+                immediateRender: false,
               },
-              2.4,
+              2.75,
             );
           }
           // Each slot scrambles through random characters and lands on the
@@ -373,7 +422,7 @@ export function HeroClient({
           nameSlots.forEach((slot, i) => {
             const target = NAME_SLOTS[i];
             if (!target) return;
-            const start = 2.4 + i * 0.12;
+            const start = 2.75 + i * 0.12;
             morphTl.to(
               slot,
               {
@@ -407,14 +456,21 @@ export function HeroClient({
             nameSlots,
             { scale: 1.04 },
             { scale: 1, duration: 0.3, ease: "power2.out", stagger: 0.02 },
-            3.0,
+            3.4,
           );
 
-          // Stage 3.4: "o" appears in place — simple fade-in, no splash
-          morphTl.to(
+          // Stage 3.4: "o" appears in place — fromTo keeps autoAlpha 0 before this
+          // segment (avoids stray "Luis…o" after refresh / ST scrub at progress 0).
+          morphTl.fromTo(
             oWrapRef.current,
-            { autoAlpha: 1, duration: 0.4, ease: "power2.out" },
-            3.4,
+            { autoAlpha: 0 },
+            {
+              autoAlpha: 1,
+              duration: 0.4,
+              ease: "power2.out",
+              immediateRender: false,
+            },
+            3.75,
           );
 
           if (typeof document !== "undefined" && "fonts" in document) {
@@ -467,7 +523,7 @@ export function HeroClient({
                     ref={(el) => {
                       nameSlotRefs.current[i] = el;
                     }}
-                    className="inline-block will-change-transform"
+                    className="inline-block opacity-0 will-change-transform"
                     style={{ transformStyle: "preserve-3d" }}
                   >
                     {slot.from}
@@ -478,8 +534,11 @@ export function HeroClient({
               {/* Angelo — letter by letter */}
               <span
                 ref={angeloWrapRef}
-                className="inline-flex items-baseline whitespace-nowrap will-change-transform"
-                style={{ paddingRight: "0.28em" }}
+                className="inline-flex items-baseline overflow-hidden whitespace-nowrap will-change-transform"
+                style={{
+                  paddingRight: "0.28em",
+                  clipPath: "inset(-100% 0 -100% 0)",
+                }}
               >
                 {ANGELO_CHARS.map((ch, i) => (
                   <span
@@ -487,7 +546,7 @@ export function HeroClient({
                     ref={(el) => {
                       angeloCharRefs.current[i] = el;
                     }}
-                    className="inline-block will-change-transform"
+                    className="inline-block opacity-0 will-change-transform"
                     style={{ transformStyle: "preserve-3d" }}
                   >
                     {ch}
@@ -498,8 +557,11 @@ export function HeroClient({
               {/* Rodriguez — letter by letter */}
               <span
                 ref={rodriguezWrapRef}
-                className="inline-flex items-baseline whitespace-nowrap will-change-transform"
-                style={{ paddingRight: "0.28em" }}
+                className="inline-flex items-baseline overflow-hidden whitespace-nowrap will-change-transform"
+                style={{
+                  paddingRight: "0.28em",
+                  clipPath: "inset(-100% 0 -100% 0)",
+                }}
               >
                 {RODRIGUEZ_CHARS.map((ch, i) => (
                   <span
@@ -507,7 +569,7 @@ export function HeroClient({
                     ref={(el) => {
                       rodriguezCharRefs.current[i] = el;
                     }}
-                    className="inline-block will-change-transform"
+                    className="inline-block opacity-0 will-change-transform"
                     style={{ transformStyle: "preserve-3d" }}
                   >
                     {ch}
@@ -518,7 +580,8 @@ export function HeroClient({
               {/* The "o" — appears in place at the end of "cuis" */}
               <span
                 ref={oWrapRef}
-                className="inline-block font-mono font-bold text-primary will-change-transform"
+                className="inline-block opacity-0 font-mono font-bold text-primary will-change-transform"
+                aria-hidden="true"
               >
                 o
               </span>
