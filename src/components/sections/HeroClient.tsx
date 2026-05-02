@@ -374,16 +374,18 @@ export function HeroClient({
           // Until true, morph progress stays 0 (avoids ST + scroll restoration during intro).
           let entranceFinished = false;
 
-          function captureSurnameWrapWidths(morphTimeline: gsap.core.Timeline) {
+          /**
+           * Measure natural wrap widths without touching morph timeline progress.
+           * Temporarily forcing progress to 0 (old approach) changes layout height and
+           * breaks ScrollTrigger when scrolling back up past the pin.
+           */
+          function captureSurnameWrapWidths() {
             const rod = rodriguezWrapRef.current;
             const ang = angeloWrapRef.current;
             if (!rod || !ang) return;
-            const saved = entranceFinished ? morphTimeline.progress() : 0;
-            morphTimeline.progress(0);
             gsap.set([rod, ang], { clearProps: "width,maxWidth" });
             rodriguezWrapFullWidth = rod.offsetWidth;
             angeloWrapFullWidth = ang.offsetWidth;
-            morphTimeline.progress(saved);
           }
 
           function addMorphWrapCollapse(
@@ -422,7 +424,6 @@ export function HeroClient({
               scrub: MORPH_SCROLL.scrub,
               anticipatePin: MORPH_SCROLL.anticipatePin,
               invalidateOnRefresh: true,
-              onRefresh: () => captureSurnameWrapWidths(morphTl),
               onUpdate: () => {
                 if (!entranceFinished) morphTl.progress(0);
               },
@@ -431,7 +432,7 @@ export function HeroClient({
 
           entrance.eventCallback("onComplete", () => {
             entranceFinished = true;
-            captureSurnameWrapWidths(morphTl);
+            captureSurnameWrapWidths();
             ScrollTrigger.refresh();
           });
 
@@ -553,7 +554,12 @@ export function HeroClient({
           );
 
           if (typeof document !== "undefined" && "fonts" in document) {
-            document.fonts.ready.then(() => ScrollTrigger.refresh());
+            document.fonts.ready.then(() => {
+              if (!entranceFinished) return;
+              // Only remeasure if still at morph start — else avoid layout thrash.
+              if (morphTl.progress() <= 0.01) captureSurnameWrapWidths();
+              ScrollTrigger.refresh();
+            });
           }
         },
       );
