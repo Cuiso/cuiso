@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Playfair_Display } from "next/font/google";
 import type { ReactNode } from "react";
+import { MeshWallpaper } from "@/components/MeshWallpaper";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
 
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${inter.variable} ${jetbrains.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full font-sans text-ink bg-surface">
+        <MeshWallpaper />
         <Providers>{children}</Providers>
       </body>
     </html>

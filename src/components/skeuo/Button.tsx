@@ -5,11 +5,11 @@ export type SkeuoButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
 
 const variantClass: Record<SkeuoButtonVariant, string> = {
   primary:
-    "border border-[#1d4ed8]/90 bg-gradient-to-b from-[#2563eb] to-[#1e40af] text-white hover:brightness-[1.04]",
+    "border border-[#0a1530]/90 bg-gradient-to-b from-[#1d3b6f] to-[#0a1530] text-white hover:brightness-[1.06]",
   secondary:
-    "border border-[#991b1b]/80 bg-gradient-to-b from-[#dc2626] to-[#b91c1c] text-white hover:brightness-[1.04]",
+    "border border-[#7a1a2d]/80 bg-gradient-to-b from-[#b22a45] to-[#7a1a2d] text-white hover:brightness-[1.06]",
   tertiary:
-    "border border-[#166534]/80 bg-gradient-to-b from-[#15803d] to-[#14532d] text-white hover:brightness-[1.04]",
+    "border border-[#25613e]/80 bg-gradient-to-b from-[#3a8a5d] to-[#25613e] text-white hover:brightness-[1.06]",
   ghost:
     "border border-ink/15 bg-gradient-to-b from-surface-card to-surface text-ink dark:border-ink/25",
 };

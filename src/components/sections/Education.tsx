@@ -1,10 +1,12 @@
-import { getLocale, getTranslations } from "next-intl/server";
+"use client";
+
+import { useLocale, useTranslations } from "next-intl";
 import { SkeuoCard } from "@/components/skeuo/Card";
 import { education } from "@/data/education";
 
-export async function EducationSection() {
-  const t = await getTranslations("education");
-  const locale = await getLocale();
+export function EducationSection() {
+  const t = useTranslations("education");
+  const locale = useLocale();
   const loc = locale as "es" | "en";
 
   return (

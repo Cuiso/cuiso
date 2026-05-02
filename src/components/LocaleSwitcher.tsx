@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { routing } from "@/i18n/routing";
+import { useLocaleSwitch } from "@/components/LocaleProvider";
 import { cn } from "@/lib/cn";
 import { gsap, useGSAP } from "@/lib/gsap";
 import {
@@ -11,11 +11,11 @@ import {
   prefersReducedMotion,
 } from "@/lib/segmentedPill";
 
+type Locale = (typeof routing.locales)[number];
+
 export function LocaleSwitcher() {
   const t = useTranslations("locale");
-  const locale = useLocale();
-  const pathname = usePathname();
-  const router = useRouter();
+  const { locale, setLocale } = useLocaleSwitch();
 
   const trackRef = useRef<HTMLDivElement>(null);
   const pillRef = useRef<HTMLSpanElement>(null);
@@ -33,7 +33,7 @@ export function LocaleSwitcher() {
     { dependencies: [locale], scope: trackRef, revertOnUpdate: true },
   );
 
-  function handleSelect(targetLocale: string) {
+  function handleSelect(targetLocale: Locale) {
     if (targetLocale === locale || busy) return;
     const pill = pillRef.current;
     const targetBtn = buttonRefs.current[targetLocale];
@@ -44,7 +44,7 @@ export function LocaleSwitcher() {
     positionSegmentedPill(pill, targetBtn, {
       animate: !reduced,
       onComplete: () => {
-        router.replace(pathname, { locale: targetLocale });
+        setLocale(targetLocale);
         setBusy(false);
       },
     });

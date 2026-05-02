@@ -1,8 +1,10 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 import { SkeuoCard } from "@/components/skeuo/Card";
 
-export async function AboutSection() {
-  const t = await getTranslations("about");
+export function AboutSection() {
+  const t = useTranslations("about");
 
   return (
     <section id="about" className="scroll-mt-28 py-20">

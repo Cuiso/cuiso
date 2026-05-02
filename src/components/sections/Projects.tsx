@@ -1,4 +1,6 @@
-import { getLocale, getTranslations } from "next-intl/server";
+"use client";
+
+import { useLocale, useTranslations } from "next-intl";
 import { ExternalLink } from "lucide-react";
 import { SkeuoBadge } from "@/components/skeuo/Badge";
 import { SkeuoCard } from "@/components/skeuo/Card";
@@ -6,9 +8,9 @@ import { projects } from "@/data/projects";
 
 const tone = ["primary", "secondary", "tertiary"] as const;
 
-export async function ProjectsSection() {
-  const t = await getTranslations("projects");
-  const locale = await getLocale();
+export function ProjectsSection() {
+  const t = useTranslations("projects");
+  const locale = useLocale();
   const loc = locale as "es" | "en";
 
   return (

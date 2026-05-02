@@ -1,11 +1,13 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Mail, MessageCircle } from "lucide-react";
 import { SkeuoAnchor } from "@/components/skeuo/Anchor";
 import { SkeuoCard } from "@/components/skeuo/Card";
 import { profile } from "@/data/profile";
 
-export async function ContactSection() {
-  const t = await getTranslations("contact");
+export function ContactSection() {
+  const t = useTranslations("contact");
   const waHref = `https://wa.me/${profile.whatsappE164.replace("+", "")}`;
 
   return (

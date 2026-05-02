@@ -1,61 +1,113 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary: #2563eb;
-  --color-secondary: #dc2626;
-  --color-tertiary: #15803d;
-  --color-surface: #e5e7eb;
-  --color-surface-card: #f3f4f6;
-  --color-ink: #0f172a;
-  --color-muted: #64748b;
+  --color-primary: #0f1d3a;
+  --color-secondary: #a3253d;
+  --color-tertiary: #3d8c5e;
+  --color-surface: #e6e7e1;
+  --color-surface-card: #f4f1ea;
+  --color-ink: #0a1530;
+  --color-muted: #5b6478;
+
+  --paper-tint: rgba(163, 37, 61, 0.04);
+
+  --mesh-blob-primary: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  --mesh-blob-secondary: color-mix(in srgb, var(--color-secondary) 13%, transparent);
+  --mesh-blob-tertiary: color-mix(in srgb, var(--color-tertiary) 11%, transparent);
 
   --shadow-raised:
-    0 1px 0 0 rgba(255, 255, 255, 0.65) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.06) inset,
-    0 1px 2px rgba(0, 0, 0, 0.06),
-    0 8px 16px -4px rgba(0, 0, 0, 0.1);
+    0 1px 0 0 rgba(255, 255, 255, 0.7) inset,
+    0 -1px 0 0 rgba(15, 29, 58, 0.08) inset,
+    0 1px 2px rgba(15, 29, 58, 0.08),
+    0 10px 18px -6px rgba(15, 29, 58, 0.14);
   --shadow-pressed:
-    0 1px 2px rgba(0, 0, 0, 0.1) inset,
-    0 -1px 0 0 rgba(255, 255, 255, 0.35) inset;
+    0 1px 2px rgba(15, 29, 58, 0.12) inset,
+    0 -1px 0 0 rgba(255, 255, 255, 0.4) inset;
   --shadow-inset:
-    0 1px 2px rgba(0, 0, 0, 0.08) inset,
-    0 -1px 0 0 rgba(255, 255, 255, 0.5) inset;
+    0 1px 2px rgba(15, 29, 58, 0.1) inset,
+    0 -1px 0 0 rgba(255, 255, 255, 0.55) inset;
   --shadow-nav:
-    0 1px 0 0 rgba(255, 255, 255, 0.5) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.04) inset,
-    0 4px 12px -2px rgba(0, 0, 0, 0.08);
+    0 1px 0 0 rgba(255, 255, 255, 0.55) inset,
+    0 -1px 0 0 rgba(15, 29, 58, 0.06) inset,
+    0 4px 12px -2px rgba(15, 29, 58, 0.1);
+  --shadow-ribbon:
+    0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.18) inset,
+    0 2px 4px -1px rgba(15, 29, 58, 0.18);
 
   --halo-primary: drop-shadow(0 0 18px color-mix(in srgb, var(--color-primary) 55%, transparent))
     drop-shadow(0 0 36px color-mix(in srgb, var(--color-primary) 30%, transparent));
+
+  --paper-noise:
+    repeating-linear-gradient(
+      0deg,
+      rgba(15, 29, 58, 0.018) 0,
+      rgba(15, 29, 58, 0.018) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(163, 37, 61, 0.015) 0,
+      rgba(163, 37, 61, 0.015) 1px,
+      transparent 1px,
+      transparent 4px
+    );
 }
 
 .dark {
-  --color-primary: #3b82f6;
-  --color-secondary: #f87171;
-  --color-tertiary: #4ade80;
-  --color-surface: #1f2937;
-  --color-surface-card: #374151;
-  --color-ink: #f1f5f9;
-  --color-muted: #94a3b8;
+  --color-primary: #3b6cc4;
+  --color-secondary: #d44a66;
+  --color-tertiary: #5cb87f;
+  --color-surface: #0d1424;
+  --color-surface-card: #1a2542;
+  --color-ink: #f1ece3;
+  --color-muted: #9aa3b8;
+
+  --paper-tint: rgba(212, 74, 102, 0.05);
+
+  --mesh-blob-primary: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  --mesh-blob-secondary: color-mix(in srgb, var(--color-secondary) 18%, transparent);
+  --mesh-blob-tertiary: color-mix(in srgb, var(--color-tertiary) 14%, transparent);
 
   --shadow-raised:
     0 1px 0 0 rgba(255, 255, 255, 0.08) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.4) inset,
-    0 1px 2px rgba(0, 0, 0, 0.5),
-    0 8px 16px -4px rgba(0, 0, 0, 0.6);
+    0 -1px 0 0 rgba(0, 0, 0, 0.5) inset,
+    0 1px 2px rgba(0, 0, 0, 0.55),
+    0 10px 20px -6px rgba(0, 0, 0, 0.7);
   --shadow-pressed:
-    0 1px 3px rgba(0, 0, 0, 0.5) inset,
+    0 1px 3px rgba(0, 0, 0, 0.55) inset,
     0 -1px 0 0 rgba(255, 255, 255, 0.06) inset;
   --shadow-inset:
-    0 1px 2px rgba(0, 0, 0, 0.35) inset,
+    0 1px 2px rgba(0, 0, 0, 0.4) inset,
     0 -1px 0 0 rgba(255, 255, 255, 0.06) inset;
   --shadow-nav:
     0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.3) inset,
-    0 4px 14px -2px rgba(0, 0, 0, 0.45);
+    0 -1px 0 0 rgba(0, 0, 0, 0.35) inset,
+    0 4px 14px -2px rgba(0, 0, 0, 0.5);
+  --shadow-ribbon:
+    0 1px 0 0 rgba(255, 255, 255, 0.12) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.45) inset,
+    0 2px 6px -1px rgba(0, 0, 0, 0.5);
 
   --halo-primary: drop-shadow(0 0 22px color-mix(in srgb, var(--color-primary) 70%, transparent))
     drop-shadow(0 0 44px color-mix(in srgb, var(--color-primary) 40%, transparent));
+
+  --paper-noise:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.018) 0,
+      rgba(255, 255, 255, 0.018) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(212, 74, 102, 0.02) 0,
+      rgba(212, 74, 102, 0.02) 1px,
+      transparent 1px,
+      transparent 4px
+    );
 }
 
 @theme inline {
@@ -76,6 +128,7 @@
   --shadow-pressed: var(--shadow-pressed);
   --shadow-inset: var(--shadow-inset);
   --shadow-nav: var(--shadow-nav);
+  --shadow-ribbon: var(--shadow-ribbon);
 }
 
 @layer base {
@@ -101,6 +154,18 @@
     background-color: var(--color-surface);
     color: var(--color-ink);
     font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(60% 50% at 12% 18%, var(--mesh-blob-primary), transparent 70%),
+      radial-gradient(55% 45% at 88% 28%, var(--mesh-blob-secondary), transparent 72%),
+      radial-gradient(70% 55% at 50% 96%, var(--mesh-blob-tertiary), transparent 70%);
   }
 
   ::selection {

@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { DocumentLang } from "@/components/DocumentLang";
+import { LocaleProvider } from "@/components/LocaleProvider";
+
+type Locale = (typeof routing.locales)[number];
 
 type Props = {
   children: ReactNode;
@@ -33,17 +34,23 @@ export async function generateMetadata({ params }: Props) {
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
+  if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
 
   setRequestLocale(locale);
-  const messages = await getMessages();
+
+  const [es, en] = await Promise.all([
+    import("../../../messages/es.json").then((m) => m.default),
+    import("../../../messages/en.json").then((m) => m.default),
+  ]);
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      <DocumentLang />
+    <LocaleProvider
+      initialLocale={locale as Locale}
+      messages={{ es, en }}
+    >
       {children}
-    </NextIntlClientProvider>
+    </LocaleProvider>
   );
 }

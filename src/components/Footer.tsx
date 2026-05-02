@@ -1,8 +1,10 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 import { profile } from "@/data/profile";
 
-export async function Footer() {
-  const t = await getTranslations("footer");
+export function Footer() {
+  const t = useTranslations("footer");
 
   return (
     <footer className="border-t border-ink/10 py-8 text-center dark:border-ink/15">

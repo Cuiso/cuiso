@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ChevronRight } from "lucide-react";
 import { SkeuoAnchor } from "@/components/skeuo/Anchor";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
@@ -162,6 +162,11 @@ export function HeroClient({
   const caretRef = useRef<HTMLSpanElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const ctasRef = useRef<HTMLDivElement>(null);
+
+  const roleLabelsRef = useRef(roleLabels);
+  useEffect(() => {
+    roleLabelsRef.current = roleLabels;
+  }, [roleLabels]);
 
   useGSAP(
     () => {
@@ -346,7 +351,8 @@ export function HeroClient({
               return tl;
             };
             const cycle = () => {
-              const next = (idx + 1) % roleLabels.length;
+              const labels = roleLabelsRef.current;
+              const next = (idx + 1) % labels.length;
               gsap
                 .timeline({
                   onComplete: () => {
@@ -355,10 +361,10 @@ export function HeroClient({
                   },
                 })
                 .add(eraseWord())
-                .add(typeWord(roleLabels[next]));
+                .add(typeWord(labels[next] ?? ""));
             };
             el.textContent = "";
-            typeWord(roleLabels[0] ?? "");
+            typeWord(roleLabelsRef.current[0] ?? "");
             gsap.delayedCall(2.2, cycle);
           });
 
@@ -554,7 +560,7 @@ export function HeroClient({
 
       return () => mm.revert();
     },
-    { scope: sectionRef, dependencies: [roleLabels] },
+    { scope: sectionRef, dependencies: [] },
   );
 
   return (

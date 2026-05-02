@@ -1,11 +1,13 @@
-import { getLocale, getTranslations } from "next-intl/server";
+"use client";
+
+import { useLocale, useTranslations } from "next-intl";
 import { SkeuoCard } from "@/components/skeuo/Card";
 import { SkeuoChip } from "@/components/skeuo/Chip";
 import { getSkillGroups } from "@/data/skills";
 
-export async function SkillsSection() {
-  const t = await getTranslations("skills");
-  const locale = await getLocale();
+export function SkillsSection() {
+  const t = useTranslations("skills");
+  const locale = useLocale();
   const groups = getSkillGroups(locale as "es" | "en");
 
   return (

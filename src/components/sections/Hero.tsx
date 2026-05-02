@@ -1,10 +1,12 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 import { profile } from "@/data/profile";
 import { HeroClient } from "./HeroClient";
 
-export async function HeroSection() {
-  const t = await getTranslations("hero");
-  const tSkills = await getTranslations("skills");
+export function HeroSection() {
+  const t = useTranslations("hero");
+  const tSkills = useTranslations("skills");
 
   return (
     <HeroClient
