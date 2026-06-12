@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import { Anchor } from "@/components/ui/Anchor";
 import { GithubIcon, LinkedinIcon } from "@/components/icons";
@@ -581,12 +582,14 @@ export function HeroClient({
         className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-20 md:py-28"
       >
         <div className="mx-auto flex w-full max-w-2xl flex-col items-center px-5 text-center">
-          <span
-            aria-hidden
-            className="mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-charcoal font-mono text-lg font-semibold text-white"
-          >
-            LR
-          </span>
+          <Image
+            src="/avatar.jpg"
+            alt={fullName}
+            width={80}
+            height={80}
+            priority
+            className="mb-7 h-20 w-20 rounded-full object-cover ring-1 ring-black/5"
+          />
 
           <p
             ref={greetRef}

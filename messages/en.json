@@ -9,10 +9,7 @@
     "projects": "Projects",
     "experience": "Experience",
     "education": "Education",
-    "contact": "Contact",
-    "blog": "Blog",
-    "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "contact": "Contact"
   },
   "hero": {
     "greeting": "Hi, I’m",
@@ -23,7 +20,7 @@
   },
   "about": {
     "title": "About",
-    "body": "Systems Engineer (UNI) and AI Engineer from Hanyang Cyber University. Currently AI Engineer / SRE at ENTEL, shipping GenAI to production at scale. Previously AI-first solutions architect at PI-TEC (multi-cloud) and an Analytics intern at Yape. I work at the intersection of AI, SRE, and Design Engineering."
+    "body": "AI Engineer / SRE at ENTEL, shipping GenAI to production at scale. Systems Engineer (UNI), working at the intersection of AI, SRE, and Design Engineering."
   },
   "skills": {
     "title": "Skills",
@@ -52,19 +49,6 @@
   },
   "footer": {
     "rights": "All rights reserved."
-  },
-  "blog": {
-    "title": "Blog",
-    "subtitle": "Notes on engineering and design.",
-    "back": "Back to home",
-    "read": "Read",
-    "empty": "No posts in this language yet.",
-    "posted": "Posted"
-  },
-  "theme": {
-    "light": "Light",
-    "dark": "Dark",
-    "toggle": "Toggle theme"
   },
   "locale": {
     "switch": "Language",

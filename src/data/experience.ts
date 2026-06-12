@@ -3,6 +3,7 @@ import type { Locale } from "next-intl";
 export type Role = {
   id: string;
   company: string;
+  logo?: string;
   title: Record<Locale, string>;
   period: Record<Locale, string>;
   bullets: Record<Locale, string[]>;
@@ -12,6 +13,7 @@ export const experience: Role[] = [
   {
     id: "entel",
     company: "ENTEL · Lima, Perú",
+    logo: "/logos/entel.png",
     title: {
       es: "AI Engineer / SRE — Analytics Squad (AI-first)",
       en: "AI Engineer / SRE — Analytics Squad (AI-first)",
@@ -70,6 +72,7 @@ export const experience: Role[] = [
   {
     id: "yape",
     company: "Yape — Credicorp · Lima, Perú",
+    logo: "/logos/yape.png",
     title: {
       es: "Practicante — Analytics & Strategy CX",
       en: "Intern — Analytics & Strategy CX",

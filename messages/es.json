@@ -9,10 +9,7 @@
     "projects": "Proyectos",
     "experience": "Experiencia",
     "education": "Educación",
-    "contact": "Contacto",
-    "blog": "Blog",
-    "openMenu": "Abrir menú",
-    "closeMenu": "Cerrar menú"
+    "contact": "Contacto"
   },
   "hero": {
     "greeting": "Hola, soy",
@@ -23,7 +20,7 @@
   },
   "about": {
     "title": "Sobre mí",
-    "body": "Ingeniero de Sistemas (UNI) y AI Engineer por Hanyang Cyber University. Hoy AI Engineer / SRE en ENTEL llevando GenAI a producción a escala. Antes, arquitecto AI-first en PI-TEC (multi-cloud) e intern de Analytics en Yape. Trabajo en el cruce de IA, SRE y Design Engineering."
+    "body": "AI Engineer / SRE en ENTEL, llevando GenAI a producción a escala. Ingeniero de Sistemas (UNI), en el cruce de IA, SRE y Design Engineering."
   },
   "skills": {
     "title": "Habilidades",
@@ -52,19 +49,6 @@
   },
   "footer": {
     "rights": "Todos los derechos reservados."
-  },
-  "blog": {
-    "title": "Blog",
-    "subtitle": "Notas técnicas y design.",
-    "back": "Volver al inicio",
-    "read": "Leer",
-    "empty": "Aún no hay artículos en este idioma.",
-    "posted": "Publicado"
-  },
-  "theme": {
-    "light": "Claro",
-    "dark": "Oscuro",
-    "toggle": "Cambiar tema"
   },
   "locale": {
     "switch": "Idioma",
