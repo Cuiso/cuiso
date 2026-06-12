@@ -53,14 +53,14 @@ export function LocaleSwitcher() {
   return (
     <div
       ref={trackRef}
-      className="relative inline-flex h-9 shrink-0 items-center gap-1 rounded-full border border-ink/15 bg-gradient-to-b from-surface-card to-surface p-1 shadow-[var(--shadow-inset)] dark:border-ink/25"
+      className="relative inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-pebble p-1"
       role="group"
       aria-label={t("switch")}
     >
       <span
         ref={pillRef}
         aria-hidden
-        className="pointer-events-none absolute z-0 rounded-full border border-ink/10 bg-gradient-to-b from-primary/20 to-primary/10 shadow-[var(--shadow-raised)] will-change-transform"
+        className="pointer-events-none absolute z-0 rounded-full border border-hairline bg-white will-change-transform"
         style={{ left: 0, top: 0 }}
       />
       {routing.locales.map((loc) => (
@@ -74,8 +74,8 @@ export function LocaleSwitcher() {
           }}
           onClick={() => handleSelect(loc)}
           className={cn(
-            "relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-[0.65rem] uppercase tracking-wider focus-skeuo disabled:opacity-60",
-            loc === locale ? "text-ink" : "text-muted hover:text-ink",
+            "relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-[0.65rem] uppercase tracking-wider focus-ring disabled:opacity-60",
+            loc === locale ? "text-carbon" : "text-ash hover:text-carbon",
           )}
         >
           {loc}

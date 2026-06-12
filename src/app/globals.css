@@ -1,116 +1,72 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary: #0f1d3a;
-  --color-secondary: #a3253d;
-  --color-tertiary: #3d8c5e;
-  --color-surface: #e6e7e1;
-  --color-surface-card: #f4f1ea;
-  --color-ink: #0a1530;
-  --color-muted: #5b6478;
+  /* Apple palette — literal tokens */
+  --color-apple-blue: #0071e3;
+  --color-link-blue: #0066cc;
+  --color-signal-blue: #2997ff;
+  --color-carbon: #1d1d1f;
+  --color-frost: #f5f5f7;
+  --color-ice: #f4f8fb;
+  --color-smoke: #333333;
+  --color-graphite: #474747;
+  --color-ash: #6e6e73;
+  --color-mist: #858585;
+  --color-pebble: #e2e2e5;
+  --color-hairline: #e3e5ea;
+  --color-charcoal: #2b2f3a; /* devfolio primary action + dark pills */
 
-  --paper-tint: rgba(163, 37, 61, 0.04);
+  /* Semantic aliases — names kept, values now devfolio */
+  --color-primary: #2b2f3a; /* near-mono accent (charcoal) */
+  --color-secondary: #6b7280;
+  --color-tertiary: #6b7280;
+  --color-surface: #f6f7f8; /* light cool-gray canvas */
+  --color-surface-card: #eef0f3; /* soft-gray cards, no border */
+  --color-ink: #1f2430; /* charcoal-ink headings */
+  --color-muted: #6b7280;
 
-  --mesh-blob-primary: color-mix(in srgb, var(--color-primary) 16%, transparent);
-  --mesh-blob-secondary: color-mix(in srgb, var(--color-secondary) 13%, transparent);
-  --mesh-blob-tertiary: color-mix(in srgb, var(--color-tertiary) 11%, transparent);
+  /* SF Pro on Apple devices via -apple-system; Inter as the cross-platform fallback. */
+  --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    var(--font-inter), system-ui, sans-serif;
+  --font-mono-stack: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 
-  --shadow-raised:
-    0 1px 0 0 rgba(255, 255, 255, 0.7) inset,
-    0 -1px 0 0 rgba(15, 29, 58, 0.08) inset,
-    0 1px 2px rgba(15, 29, 58, 0.08),
-    0 10px 18px -6px rgba(15, 29, 58, 0.14);
-  --shadow-pressed:
-    0 1px 2px rgba(15, 29, 58, 0.12) inset,
-    0 -1px 0 0 rgba(255, 255, 255, 0.4) inset;
-  --shadow-inset:
-    0 1px 2px rgba(15, 29, 58, 0.1) inset,
-    0 -1px 0 0 rgba(255, 255, 255, 0.55) inset;
-  --shadow-nav:
-    0 1px 0 0 rgba(255, 255, 255, 0.55) inset,
-    0 -1px 0 0 rgba(15, 29, 58, 0.06) inset,
-    0 4px 12px -2px rgba(15, 29, 58, 0.1);
-  --shadow-ribbon:
-    0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.18) inset,
-    0 2px 4px -1px rgba(15, 29, 58, 0.18);
+  /* Almost-imperceptible canvas wash (Apple is flat). */
+  --mesh-blob-primary: color-mix(in srgb, var(--color-signal-blue) 4%, transparent);
+  --mesh-blob-secondary: color-mix(in srgb, var(--color-carbon) 2%, transparent);
+  --mesh-blob-tertiary: color-mix(in srgb, var(--color-signal-blue) 3%, transparent);
 
-  --halo-primary: drop-shadow(0 0 18px color-mix(in srgb, var(--color-primary) 55%, transparent))
-    drop-shadow(0 0 36px color-mix(in srgb, var(--color-primary) 30%, transparent));
+  /* Flat by design: hierarchy comes from hairlines + surface shifts, not elevation. */
+  --shadow-card: none;
+  --shadow-card-inset: none;
+  --shadow-raised: none;
+  --shadow-elevated: none;
+  --shadow-pressed: none;
+  --shadow-inset: none;
+  --shadow-nav: none;
+  --shadow-ribbon: none;
+  /* The single permitted shadow: grounds product imagery on the white canvas. */
+  --shadow-product: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
 
-  --paper-noise:
-    repeating-linear-gradient(
-      0deg,
-      rgba(15, 29, 58, 0.018) 0,
-      rgba(15, 29, 58, 0.018) 1px,
-      transparent 1px,
-      transparent 3px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(163, 37, 61, 0.015) 0,
-      rgba(163, 37, 61, 0.015) 1px,
-      transparent 1px,
-      transparent 4px
-    );
-}
-
-.dark {
-  --color-primary: #3b6cc4;
-  --color-secondary: #d44a66;
-  --color-tertiary: #5cb87f;
-  --color-surface: #0d1424;
-  --color-surface-card: #1a2542;
-  --color-ink: #f1ece3;
-  --color-muted: #9aa3b8;
-
-  --paper-tint: rgba(212, 74, 102, 0.05);
-
-  --mesh-blob-primary: color-mix(in srgb, var(--color-primary) 22%, transparent);
-  --mesh-blob-secondary: color-mix(in srgb, var(--color-secondary) 18%, transparent);
-  --mesh-blob-tertiary: color-mix(in srgb, var(--color-tertiary) 14%, transparent);
-
-  --shadow-raised:
-    0 1px 0 0 rgba(255, 255, 255, 0.08) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.5) inset,
-    0 1px 2px rgba(0, 0, 0, 0.55),
-    0 10px 20px -6px rgba(0, 0, 0, 0.7);
-  --shadow-pressed:
-    0 1px 3px rgba(0, 0, 0, 0.55) inset,
-    0 -1px 0 0 rgba(255, 255, 255, 0.06) inset;
-  --shadow-inset:
-    0 1px 2px rgba(0, 0, 0, 0.4) inset,
-    0 -1px 0 0 rgba(255, 255, 255, 0.06) inset;
-  --shadow-nav:
-    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.35) inset,
-    0 4px 14px -2px rgba(0, 0, 0, 0.5);
-  --shadow-ribbon:
-    0 1px 0 0 rgba(255, 255, 255, 0.12) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.45) inset,
-    0 2px 6px -1px rgba(0, 0, 0, 0.5);
-
-  --halo-primary: drop-shadow(0 0 22px color-mix(in srgb, var(--color-primary) 70%, transparent))
-    drop-shadow(0 0 44px color-mix(in srgb, var(--color-primary) 40%, transparent));
-
-  --paper-noise:
-    repeating-linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.018) 0,
-      rgba(255, 255, 255, 0.018) 1px,
-      transparent 1px,
-      transparent 3px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(212, 74, 102, 0.02) 0,
-      rgba(212, 74, 102, 0.02) 1px,
-      transparent 1px,
-      transparent 4px
-    );
+  /* Apple uses no texture. */
+  --grain-noise: none;
+  --paper-noise: none;
 }
 
 @theme inline {
+  --color-apple-blue: var(--color-apple-blue);
+  --color-link-blue: var(--color-link-blue);
+  --color-signal-blue: var(--color-signal-blue);
+  --color-carbon: var(--color-carbon);
+  --color-frost: var(--color-frost);
+  --color-ice: var(--color-ice);
+  --color-smoke: var(--color-smoke);
+  --color-graphite: var(--color-graphite);
+  --color-ash: var(--color-ash);
+  --color-mist: var(--color-mist);
+  --color-pebble: var(--color-pebble);
+  --color-hairline: var(--color-hairline);
+  --color-charcoal: var(--color-charcoal);
+
   --color-primary: var(--color-primary);
   --color-secondary: var(--color-secondary);
   --color-tertiary: var(--color-tertiary);
@@ -118,17 +74,43 @@
   --color-surface-card: var(--color-surface-card);
   --color-ink: var(--color-ink);
   --color-muted: var(--color-muted);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains);
-  --font-serif: var(--font-playfair);
+
+  --font-sans: var(--font-sf);
+  --font-mono: var(--font-mono-stack);
+
+  /* Apple type scale */
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.33;
+  --text-caption--letter-spacing: -0.012em;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.47;
+  --text-body--letter-spacing: -0.016em;
+  --text-subheading: 1.3125rem;
+  --text-subheading--line-height: 1.24;
+  --text-subheading--letter-spacing: -0.011em;
+  --text-heading-sm: 1.75rem;
+  --text-heading-sm--line-height: 1.18;
+  --text-heading-sm--letter-spacing: -0.012em;
+  --text-heading: 2.5rem;
+  --text-heading--line-height: 1.1;
+  --text-heading--letter-spacing: -0.014em;
+  --text-display: 3.5rem;
+  --text-display--line-height: 1.07;
+  --text-display--letter-spacing: -0.015em;
+
   --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  --radius-md: 8px;
+  --radius-lg: 8px;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-card-inset: var(--shadow-card-inset);
   --shadow-raised: var(--shadow-raised);
+  --shadow-elevated: var(--shadow-elevated);
   --shadow-pressed: var(--shadow-pressed);
   --shadow-inset: var(--shadow-inset);
   --shadow-nav: var(--shadow-nav);
   --shadow-ribbon: var(--shadow-ribbon);
+  --shadow-product: var(--shadow-product);
 }
 
 @layer base {
@@ -153,7 +135,10 @@
   body {
     background-color: var(--color-surface);
     color: var(--color-ink);
-    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-sf);
+    /* SF Pro tightens proportionally with size — set a precise body default. */
+    letter-spacing: -0.016em;
+    -webkit-font-smoothing: antialiased;
   }
 
   body::before {
@@ -162,6 +147,8 @@
     inset: 0;
     z-index: -2;
     pointer-events: none;
+    will-change: transform;
+    contain: paint;
     background-image:
       radial-gradient(60% 50% at 12% 18%, var(--mesh-blob-primary), transparent 70%),
       radial-gradient(55% 45% at 88% 28%, var(--mesh-blob-secondary), transparent 72%),
@@ -169,26 +156,21 @@
   }
 
   ::selection {
-    background-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    background-color: color-mix(in srgb, var(--color-charcoal) 16%, transparent);
   }
 
-  .focus-skeuo:focus-visible {
-    outline: 2px solid var(--color-primary);
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--color-charcoal);
     outline-offset: 2px;
   }
 }
 
 @layer components {
-  .cuiso-o-revealed {
-    filter: var(--halo-primary);
-    transition: filter 0.4s ease-out;
-  }
-
   .prose-mdx h1 {
-    @apply text-3xl font-bold text-ink mb-4 mt-8 first:mt-0;
+    @apply text-3xl font-semibold text-ink mb-4 mt-8 first:mt-0 tracking-tight;
   }
   .prose-mdx h2 {
-    @apply text-2xl font-semibold text-ink mb-3 mt-8;
+    @apply text-2xl font-semibold text-ink mb-3 mt-8 tracking-tight;
   }
   .prose-mdx p {
     @apply text-ink/90 mb-4 leading-relaxed;
@@ -196,13 +178,14 @@
   .prose-mdx ul {
     @apply list-disc pl-6 mb-4 text-ink/90;
   }
+  .prose-mdx a {
+    @apply text-ink underline underline-offset-2 hover:text-ink/70;
+  }
   .prose-mdx code {
-    @apply font-mono text-sm bg-surface-card px-1.5 py-0.5 rounded-sm border border-ink/10;
+    @apply font-mono text-sm bg-pebble px-1.5 py-0.5 rounded-sm border border-hairline;
   }
   .prose-mdx pre {
-    @apply rounded-lg p-4 overflow-x-auto mb-4 border border-ink/10;
-    box-shadow: var(--shadow-inset);
-    background: color-mix(in srgb, var(--color-surface-card) 90%, var(--color-ink));
+    @apply rounded-lg p-4 overflow-x-auto mb-4 border border-hairline bg-ice;
   }
   .prose-mdx pre code {
     @apply bg-transparent border-0 p-0;

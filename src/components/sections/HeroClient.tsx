@@ -2,7 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { ChevronRight } from "lucide-react";
-import { SkeuoAnchor } from "@/components/skeuo/Anchor";
+import { Anchor } from "@/components/ui/Anchor";
+import { GithubIcon, LinkedinIcon } from "@/components/icons";
+import { profile } from "@/data/profile";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 const ANGELO_CHARS = ["A", "n", "g", "e", "l", "o"] as const;
@@ -126,7 +128,6 @@ const MORPH_T = buildMorphTimes();
 interface Props {
   greeting: string;
   fullName: string;
-  handle: string;
   roleLabels: string[];
   rolesLine: string;
   ctaContact: string;
@@ -137,7 +138,6 @@ interface Props {
 export function HeroClient({
   greeting,
   fullName,
-  handle,
   roleLabels,
   rolesLine,
   ctaContact,
@@ -580,21 +580,28 @@ export function HeroClient({
         ref={pinWrapRef}
         className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-20 md:py-28"
       >
-        <div className="mx-auto w-full max-w-6xl px-4 md:px-6">
+        <div className="mx-auto flex w-full max-w-2xl flex-col items-center px-5 text-center">
+          <span
+            aria-hidden
+            className="mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-charcoal font-mono text-lg font-semibold text-white"
+          >
+            LR
+          </span>
+
           <p
             ref={greetRef}
-            className="font-mono text-xs uppercase tracking-[0.25em] text-muted"
+            className="font-mono text-[13px] tracking-tight text-ash"
           >
             {greeting}
           </p>
 
           <h1
-            className="mt-4 relative font-serif font-semibold tracking-tight text-ink text-[clamp(2rem,7.5vw,5.5rem)] leading-[1.2]"
+            className="mt-3 relative font-sans font-bold tracking-[-0.02em] text-ink text-[clamp(2rem,9vw,3.5rem)] leading-[1.05]"
             style={{ perspective: "1400px" }}
           >
             <span
               aria-hidden="true"
-              className="flex items-baseline whitespace-nowrap"
+              className="flex items-baseline justify-center whitespace-nowrap"
             >
               <span
                 ref={nameWrapRef}
@@ -608,7 +615,7 @@ export function HeroClient({
                       nameSlotRefs.current[i] = el;
                     }}
                     className="inline-block opacity-0 will-change-transform"
-                    style={{ transformStyle: "preserve-3d" }}
+                    style={{ transformStyle: "preserve-3d", willChange: "transform, filter" }}
                   >
                     {slot.from}
                   </span>
@@ -672,43 +679,61 @@ export function HeroClient({
           </h1>
 
           <p
-            ref={handleRef}
-            className="mt-8 font-mono text-base md:text-lg text-muted"
+            ref={descRef}
+            className="mt-5 max-w-md text-[17px] leading-snug text-ash md:text-[19px]"
           >
-            <span className="text-primary">{handle.toLowerCase()}</span>
-            <span className="text-muted/70">@portfolio</span>
-            <span className="text-muted/50">:~$</span>{" "}
-            <span className="text-ink/80">role</span>
-            <span className="text-muted/60">=</span>
-            <span className="text-secondary">&quot;</span>
-            <span ref={roleTextRef} className="text-secondary" />
-            <span className="text-secondary">&quot;</span>
+            {rolesLine}
+          </p>
+
+          <p
+            ref={handleRef}
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-charcoal px-4 py-2 font-mono text-[13px] text-white"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-[#30d158]" aria-hidden />
+            <span ref={roleTextRef} />
             <span
               ref={caretRef}
               aria-hidden="true"
-              className="ml-1 inline-block w-[0.55em] h-[1em] align-[-0.15em] bg-primary"
+              className="inline-block h-[1em] w-[0.5em] align-[-0.15em] bg-white/70"
             />
-          </p>
-
-          <p ref={descRef} className="mt-8 max-w-2xl text-lg text-ink/90">
-            {rolesLine}
           </p>
 
           <div
             ref={ctasRef}
-            className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center"
+            className="mt-8 flex flex-col items-center gap-3 sm:flex-row"
           >
-            <SkeuoAnchor href="#contact" variant="primary">
+            <Anchor href="#contact" variant="primary">
               {ctaContact} <ChevronRight className="h-4 w-4" aria-hidden />
-            </SkeuoAnchor>
-            <SkeuoAnchor
+            </Anchor>
+            <Anchor
               href="/cv.pdf"
               variant="secondary"
               download
               aria-label={cvAria}
             >
               {ctaCv}
-            </SkeuoAnchor>
+            </Anchor>
+          </div>
+
+          <div className="mt-7 flex items-center gap-2">
+            <a
+              href={profile.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-card text-ink/70 transition-colors hover:text-ink focus-ring"
+            >
+              <GithubIcon className="h-4 w-4" />
+            </a>
+            <a
+              href={profile.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-card text-ink/70 transition-colors hover:text-ink focus-ring"
+            >
+              <LinkedinIcon className="h-4 w-4" />
+            </a>
           </div>
         </div>
       </div>

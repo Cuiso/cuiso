@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Cuiso — Luis Angelo Rodriguez",
-    "description": "Ingeniero de sistemas (UNI). IA generativa, cloud y automatización. AI Engineer en ENTEL; ex PI-TEC y Yape."
+    "description": "AI Engineer / SRE en ENTEL. GenAI productivo, RAG, multiagentes y SRE multi-cloud. Bachiller UNI + Hanyang Cyber University (AI Engineering). Ex PI-TEC y Yape."
   },
   "nav": {
     "about": "Sobre mí",
@@ -16,14 +16,14 @@
   },
   "hero": {
     "greeting": "Hola, soy",
-    "rolesLine": "IA generativa, automatización en la nube y productos escalables. Hackathons, datos y aprendizaje continuo.",
+    "rolesLine": "Solution architect: diseño, construyo y opero sistemas en producción. Multi-cloud, AI-first.",
     "ctaContact": "Contacto",
     "ctaCv": "Descargar CV",
     "cvAria": "Descargar curriculum en PDF"
   },
   "about": {
     "title": "Sobre mí",
-    "body": "Profesional apasionado por la tecnología y la innovación: ingeniero de sistemas que diseña soluciones de IA generativa y automatización en la nube. Me motiva construir productos escalables que generen valor. Participo en hackathons, exploro nuevas formas de aplicar la tecnología y aprendo en el proceso. Voluntariado y liderazgo técnico en proyectos web y chatbots en la comunidad FIIS (Centro Cultural Núcleo)."
+    "body": "Ingeniero de Sistemas (UNI) y AI Engineer por Hanyang Cyber University. Hoy AI Engineer / SRE en ENTEL llevando GenAI a producción a escala. Antes, arquitecto AI-first en PI-TEC (multi-cloud) e intern de Analytics en Yape. Trabajo en el cruce de IA, SRE y Design Engineering."
   },
   "skills": {
     "title": "Habilidades",

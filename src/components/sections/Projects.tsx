@@ -1,12 +1,9 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { ExternalLink } from "lucide-react";
-import { SkeuoBadge } from "@/components/skeuo/Badge";
-import { SkeuoCard } from "@/components/skeuo/Card";
+import { ArrowUpRight } from "lucide-react";
+import { Badge } from "@/components/ui/Badge";
 import { projects } from "@/data/projects";
-
-const tone = ["primary", "secondary", "tertiary"] as const;
 
 export function ProjectsSection() {
   const t = useTranslations("projects");
@@ -14,50 +11,34 @@ export function ProjectsSection() {
   const loc = locale as "es" | "en";
 
   return (
-    <section id="projects" className="scroll-mt-28 py-20">
-      <div className="mx-auto max-w-6xl px-4 md:px-6">
-        <h2 className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted">
+    <section id="projects" className="scroll-mt-20 py-12">
+      <div className="mx-auto max-w-2xl px-5">
+        <h2 className="text-[22px] font-bold tracking-tight text-ink">
           {t("title")}
         </h2>
-        <div className="mt-8 grid gap-6 md:grid-cols-2">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {projects.map((p) => (
-            <SkeuoCard key={p.id}>
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="text-lg font-bold text-ink">{p.title[loc]}</h3>
-                  <p className="mt-2 text-sm text-ink/85 leading-relaxed">
-                    {p.description[loc]}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {p.tags.map((tag, j) => (
-                  <SkeuoBadge key={tag} tone={tone[j % tone.length]}>
-                    {tag}
-                  </SkeuoBadge>
+            <a
+              key={p.id}
+              href={p.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-reveal
+              className="group relative block rounded-2xl bg-surface-card p-6 transition-colors hover:bg-[#e6e8ec] focus-ring"
+            >
+              <ArrowUpRight className="absolute right-5 top-5 h-4 w-4 text-ash transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
+              <h3 className="pr-6 text-[16px] font-semibold tracking-tight text-ink">
+                {p.title[loc]}
+              </h3>
+              <p className="mt-2 text-[14px] leading-relaxed text-ash">
+                {p.description[loc]}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {p.tags.map((tag) => (
+                  <Badge key={tag}>{tag}</Badge>
                 ))}
               </div>
-              <div className="mt-5 flex flex-wrap gap-2">
-                <a
-                  href={p.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-ink/15 bg-gradient-to-b from-surface to-surface-card px-3 py-1.5 text-xs font-semibold text-ink shadow-[var(--shadow-raised)] active:translate-y-px active:shadow-[var(--shadow-pressed)] dark:border-ink/25 focus-skeuo"
-                >
-                  {t("view")} <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-                </a>
-                {p.source ? (
-                  <a
-                    href={p.source}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-md border border-ink/15 px-3 py-1.5 text-xs font-semibold text-muted shadow-[var(--shadow-inset)] hover:text-ink dark:border-ink/25 focus-skeuo"
-                  >
-                    {t("source")}
-                  </a>
-                ) : null}
-              </div>
-            </SkeuoCard>
+            </a>
           ))}
         </div>
       </div>

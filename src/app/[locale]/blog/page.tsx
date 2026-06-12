@@ -25,25 +25,28 @@ export default async function BlogIndexPage({ params }: Props) {
   return (
     <>
       <Nav />
-      <main className="mx-auto max-w-3xl px-4 py-16 md:px-6">
-        <p className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted">
-          {t("title")}
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-ink">{t("subtitle")}</h1>
+      <main className="mx-auto max-w-2xl px-5 py-16">
+        <h1 className="text-[22px] font-bold tracking-tight text-ink">
+          {t("subtitle")}
+        </h1>
 
         {posts.length === 0 ? (
-          <p className="mt-8 text-muted">{t("empty")}</p>
+          <p className="mt-6 text-ash">{t("empty")}</p>
         ) : (
-          <ul className="mt-10 space-y-4">
+          <ul className="mt-8 space-y-4">
             {posts.map((p) => (
               <li key={p.slug}>
                 <Link
                   href={`/blog/${p.slug}`}
-                  className="block rounded-xl border border-ink/10 bg-surface-card p-4 shadow-[var(--shadow-raised)] transition-transform duration-150 hover:-translate-y-0.5 dark:border-ink/20 focus-skeuo"
+                  className="block rounded-2xl bg-surface-card p-6 transition-colors hover:bg-[#e6e8ec] focus-ring"
                 >
-                  <span className="font-semibold text-ink">{p.title}</span>
-                  <span className="mt-1 block text-sm text-muted">{p.description}</span>
-                  <span className="mt-2 block font-mono text-[0.65rem] uppercase tracking-wider text-primary">
+                  <span className="text-[16px] font-semibold tracking-tight text-ink">
+                    {p.title}
+                  </span>
+                  <span className="mt-1 block text-[14px] leading-relaxed text-ash">
+                    {p.description}
+                  </span>
+                  <span className="mt-3 block font-mono text-[12px] text-ash">
                     {t("posted")}: {p.date}
                   </span>
                 </Link>
@@ -55,7 +58,7 @@ export default async function BlogIndexPage({ params }: Props) {
         <p className="mt-12">
           <Link
             href="/"
-            className="inline-flex rounded-md border border-ink/15 bg-gradient-to-b from-surface-card to-surface px-3 py-2 text-sm font-semibold text-ink shadow-[var(--shadow-raised)] dark:border-ink/25 focus-skeuo"
+            className="text-[14px] font-medium text-ash transition-colors hover:text-ink focus-ring"
           >
             {t("back")}
           </Link>

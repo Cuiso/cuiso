@@ -1,137 +1,132 @@
 ---
 name: Cuiso Portfolio
 version: alpha
-description: Skeuomorphic-soft personal portfolio with blue, red, and green accents on gray surfaces.
+description: Minimal single-column developer portfolio — light, near-monochrome with a charcoal accent, Inter, soft-gray cards on a light canvas.
 colors:
-  primary: "#2563EB"
-  secondary: "#DC2626"
-  tertiary: "#15803D"
-  surface: "#E5E7EB"
-  surfaceDark: "#1F2937"
-  surfaceCard: "#F3F4F6"
-  surfaceCardDark: "#374151"
-  ink: "#0F172A"
-  inkDark: "#F1F5F9"
-  muted: "#64748B"
-  mutedDark: "#94A3B8"
+  primary: "#2B2F3A"
+  surface: "#F6F7F8"
+  surfaceCard: "#EEF0F3"
+  ink: "#1F2430"
+  muted: "#6B7280"
+  hairline: "#E3E5EA"
   on-primary: "#FFFFFF"
-  on-secondary: "#FFFFFF"
-  on-tertiary: "#FFFFFF"
 typography:
   display:
     fontFamily: Inter
-    fontSize: 4rem
-    fontWeight: 800
-    lineHeight: "1.1"
+    fontSize: 3.5rem
+    fontWeight: 700
+    lineHeight: "1.05"
   h1:
     fontFamily: Inter
     fontSize: 2.5rem
     fontWeight: 700
-    lineHeight: "1.2"
+    lineHeight: "1.1"
   h2:
     fontFamily: Inter
-    fontSize: 1.75rem
+    fontSize: 1.375rem
     fontWeight: 700
-    lineHeight: "1.25"
+    lineHeight: "1.2"
   body-md:
     fontFamily: Inter
     fontSize: 1rem
     fontWeight: 400
     lineHeight: "1.6"
-  label-caps:
-    fontFamily: JetBrains Mono
-    fontSize: 0.75rem
+  label-mono:
+    fontFamily: SF Mono
+    fontSize: 0.8125rem
     fontWeight: 500
-    letterSpacing: 0.08em
+    letterSpacing: "0em"
 rounded:
   sm: 8px
-  md: 14px
-  lg: 20px
+  md: 16px
+  lg: 16px
   full: 9999px
 spacing:
   xs: 4px
   sm: 8px
   md: 16px
   lg: 24px
-  xl: 40px
+  xl: 48px
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
-    rounded: "{rounded.md}"
-    padding: 12px
+    rounded: "{rounded.full}"
+    padding: 11px 20px
   button-secondary:
-    backgroundColor: "{colors.secondary}"
-    textColor: "{colors.on-secondary}"
-    rounded: "{rounded.md}"
-    padding: 12px
-  button-success:
-    backgroundColor: "{colors.tertiary}"
-    textColor: "{colors.on-tertiary}"
-    rounded: "{rounded.md}"
-    padding: 12px
-  caption-muted:
-    textColor: "{colors.muted}"
-  caption-muted-dark:
-    textColor: "{colors.mutedDark}"
-  page-light:
-    backgroundColor: "{colors.surface}"
-  card-raised:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.full}"
+    padding: 11px 20px
+  divider:
+    backgroundColor: "{colors.hairline}"
+    height: 1px
+  button-tertiary:
     backgroundColor: "{colors.surfaceCard}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.lg}"
-  panel-dark:
-    backgroundColor: "{colors.surfaceDark}"
-    textColor: "{colors.inkDark}"
-    rounded: "{rounded.lg}"
-  panel-dark-card:
-    backgroundColor: "{colors.surfaceCardDark}"
-    textColor: "{colors.inkDark}"
-    rounded: "{rounded.lg}"
+    rounded: "{rounded.full}"
+    padding: 11px 20px
+  caption-muted:
+    textColor: "{colors.muted}"
+  page:
+    backgroundColor: "{colors.surface}"
+  card:
+    backgroundColor: "{colors.surfaceCard}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.md}"
+  chip:
+    backgroundColor: "{colors.surfaceCard}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.full}"
 ---
 
 ## Overview
 
-Personal portfolio for **Cuiso** (Luis Angelo Rodriguez Parreño). The interface reads as **soft skeuomorphism on a neutral gray canvas**: elevated panels and buttons with subtle top highlights, inner shadows, and restrained gradients so elements feel tactile without looking dated.
+Personal portfolio for **Cuiso** (Luis Angelo Rodriguez). The interface follows a **minimal, single-column "devfolio" layout**: a narrow centered column on a light cool-gray canvas, content presented as **typographic lists and soft-gray cards** with no chrome. Hierarchy comes from **scale, weight, and surface shifts — never elevation**. The palette is **near-monochrome**: charcoal ink and grays, with a single **charcoal** accent reserved for the primary action and dark pills. Light theme only.
 
 ## Colors
 
-- **Primary (#2563EB):** main actions, primary CTAs, links emphasis.
-- **Secondary (#DC2626):** secondary emphasis, badges, alternate CTAs.
-- **Tertiary (#16A34A):** success states, positive highlights, accents in skill tags.
-- **Surface (#E5E7EB) / Surface dark (#1F2937):** page background (light/dark).
-- **Surface card (#F3F4F6) / Surface card dark (#374151):** raised cards slightly lighter/darker than the page for separation.
-- **Ink / Muted:** body text and secondary text for each theme.
+- **Primary / charcoal (#2B2F3A):** the only filled-action color — primary buttons, dark status/CTA pills, active chips. Used sparingly.
+- **Ink (#1F2430):** headings and primary text.
+- **Muted / ash (#6B7280):** secondary text, dates, descriptions, captions.
+- **Surface (#F6F7F8):** page canvas.
+- **Surface card (#EEF0F3):** soft-gray cards, chips, and icon buttons — borderless, slightly darker than the canvas for separation.
+- **Hairline (#E3E5EA):** the only divider/border, used for thin rules (section/blog separators).
 
 ## Typography
 
-- **Inter** for display, headings, and body (readable, modern).
-- **JetBrains Mono** for label-caps (navigation pills, micro-labels, chip prefixes).
+- **Inter** for everything (display, headings, body) — bold (700) for the name and section headings, regular (400) for body.
+- **SF Mono / system monospace** for small "guiño" labels only: the `cuiso` wordmark, the hero status pill, and meta/date lines.
+- No serif, no decorative display face.
 
 ## Layout
 
-- Single-page sections with anchor navigation; max content width **72rem** (`max-w-6xl` / `--breakpoint` aligned).
-- Vertical rhythm uses `spacing` tokens between blocks; section vertical padding **5rem** (`py-20`).
+- **Single centered column, `max-w-2xl` (~42rem)** for every section; horizontal padding `px-5`.
+- Hero is **centered** (avatar → name → subtitle → status pill → social icons); all other sections are **left-aligned** with a bold heading and a stacked list.
+- Vertical rhythm: section padding `py-12`; minimal sticky top bar (wordmark + locale + blog), no full nav.
 
 ## Elevation & Depth
 
-- **Raised:** combined inset top highlight, inset bottom depth, light contact shadow, and soft drop shadow (see CSS variables `--shadow-raised`).
-- **Pressed:** inverted for `active`/`aria-pressed` on interactive affordances.
-- **Inset pits:** inputs and recessed wells use `--shadow-inset` on a surface slightly darker than the card.
+- **Flat by design.** No drop shadows on cards, buttons, or pills. The single permitted shadow (`--shadow-product`) is reserved for imagery only.
+- Separation comes from the **surface shift** (cards `#EEF0F3` on canvas `#F6F7F8`) and **hairline** rules — not from shadows.
 
 ## Shapes
 
-- **rounded.sm** for compact controls; **rounded.md** for primary buttons; **rounded.lg** for cards; **rounded.full** for pills (nav, chips).
+- **rounded.full (9999px)** for every interactive pill: buttons, chips, badges, icon buttons.
+- **rounded.md (16px)** for cards and tiles.
+- **rounded.sm (8px)** for inputs and inline code.
 
 ## Components
 
-- **Buttons:** gradient top-to-bottom, 1px border slightly darker than fill, `button-*` tokens map to variants (primary, secondary, success).
-- **Cards:** `card-raised` background, large radius, raised shadow; optional inner border for definition in dark mode.
-- **Chips / badges:** shallow raised or inset pills; tertiary chip for “tooling” tags.
+- **Buttons (pills):** `primary` = charcoal fill + white text; `secondary` = 1px hairline outline + ink text; `tertiary` = soft-gray fill + ink text; `ghost` = ink text link. Defined in `src/components/ui/Button.tsx`.
+- **Cards:** soft-gray fill, 16px radius, no border, no shadow, `p-6`. `src/components/ui/Card.tsx`.
+- **Chips / badges:** soft-gray pills; active chip uses the charcoal fill. `Chip.tsx` / `Badge.tsx`.
+- **Status pill:** dark charcoal pill with a status dot + monospace role text (hero).
 
 ## Do's and Don'ts
 
-- **Do** keep shadows layered but soft; prefer luminance shifts over heavy blur.
-- **Do** ensure focus-visible rings remain visible on skeuomorphic surfaces (high contrast ring, not a faint glow).
-- **Don’t** add skeuomorphic chrome to every element—flat typography areas on gray reduce noise.
-- **Don’t** use pure black or pure white for large fills; stick to ink and surface tokens.
+- **Do** keep the surface flat — separate with the gray card fill and hairlines, never shadows.
+- **Do** keep blue out of the UI; the system is monochrome (charcoal + grays). Color only ever comes from third-party brand logos.
+- **Do** reserve charcoal for the primary action and dark pills so each appearance carries weight.
+- **Don't** widen the content past `max-w-2xl` or add a full navigation bar — the minimal single column is the signature.
+- **Don't** reintroduce skeuomorphic chrome (top highlights, inset wells, layered shadows) or a dark theme.

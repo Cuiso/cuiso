@@ -29,6 +29,15 @@ uniform vec3 uColorTintB;
 uniform vec3 uColorAccent;
 uniform float uTintStrength;
 uniform float uSpotStrength;
+uniform float uParticleAlpha;
+
+// Pseudo-random helpers
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+}
+vec2 hash2(vec2 p) {
+  return vec2(hash(p), hash(p + vec2(37.0, 91.0)));
+}
 
 void main(){
   vec2 res = uResolution;
@@ -55,6 +64,43 @@ void main(){
   float spot = exp(-md * 0.85);
 
   vec3 col = mix(base, uColorAccent, spot * uSpotStrength);
+
+  // ── Particles ──────────────────────────────────────────────────────
+  float particles = 0.0;
+  const int N = 60;
+  for (int i = 0; i < N; i++) {
+    vec2 seed = vec2(float(i) * 1.73, float(i) * 2.91);
+    vec2 rng = hash2(seed);
+
+    // Base position: spread across the viewport
+    vec2 pp = (rng - 0.5) * aspect * 1.6;
+
+    // Gentle ambient drift
+    float spd = 0.08 + rng.x * 0.06;
+    pp.x += sin(t * spd + rng.y * 6.28) * 0.15;
+    pp.y += cos(t * spd * 0.7 + rng.x * 6.28) * 0.10;
+
+    // Mouse attraction — particles drift toward cursor
+    vec2 toMouse = m - pp;
+    float mouseDist = length(toMouse);
+    float attraction = exp(-mouseDist * 1.8) * 0.35;
+    pp += toMouse * attraction;
+
+    // Particle glow — larger radius for visible dots
+    float d = length(p - pp);
+    float radius = 0.012 + rng.y * 0.010;
+    float glow = radius / (d * d + radius);
+
+    // Brighten particles near mouse
+    float nearMouse = exp(-mouseDist * 2.5);
+    glow *= 0.5 + nearMouse * 2.0;
+
+    particles += glow;
+  }
+
+  particles = clamp(particles * 0.025, 0.0, 1.0);
+  // Use accent color for particle glow
+  col += uColorAccent * particles * uParticleAlpha;
 
   fragColor = vec4(col, 1.0);
 }`;
@@ -132,6 +178,7 @@ export function MeshWallpaper() {
       accent: gl.getUniformLocation(program, "uColorAccent"),
       tintStrength: gl.getUniformLocation(program, "uTintStrength"),
       spotStrength: gl.getUniformLocation(program, "uSpotStrength"),
+      particleAlpha: gl.getUniformLocation(program, "uParticleAlpha"),
     };
 
     const mouseTarget = { x: 0.5, y: 0.5 };
@@ -160,32 +207,20 @@ export function MeshWallpaper() {
         x[2] * (1 - amt) + y[2] * amt,
       ];
 
-      const isDark = document.documentElement.classList.contains("dark");
-
-      if (isDark) {
-        return {
-          base: surface,
-          tintA: mix(surface, primary, 0.20),
-          tintB: mix(surface, secondary, 0.16),
-          accent: primary,
-          tintStrength: 0.55,
-          spotStrength: 0.32,
-        };
-      }
-
-      // Light: pure white base, very light cursor mark.
-      const white: [number, number, number] = [1, 1, 1];
+      // Apple canvas: frost base, barely-there tint and cursor mark — almost flat.
       return {
-        base: white,
-        tintA: mix(white, primary, 0.04),
-        tintB: mix(white, secondary, 0.03),
+        base: surface,
+        tintA: mix(surface, primary, 0.05),
+        tintB: mix(surface, secondary, 0.03),
         accent: primary,
-        tintStrength: 0.30,
-        spotStrength: 0.16,
+        tintStrength: 0.5,
+        spotStrength: 0.04,
+        particleAlpha: 0.05,
       };
     }
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const isMobile = window.matchMedia("(pointer: coarse)").matches;
+    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.0 : 1.5);
     function resize() {
       const w = Math.floor(window.innerWidth * dpr);
       const h = Math.floor(window.innerHeight * dpr);
@@ -202,12 +237,18 @@ export function MeshWallpaper() {
       mouseTarget.y = 1 - cy / window.innerHeight;
     }
 
+    let lastMouseMoveTime = performance.now();
+
     function onMouseMove(e: MouseEvent) {
       setMouseFromClient(e.clientX, e.clientY);
+      lastMouseMoveTime = performance.now();
     }
     function onTouch(e: TouchEvent) {
       const t = e.touches[0];
-      if (t) setMouseFromClient(t.clientX, t.clientY);
+      if (t) {
+        setMouseFromClient(t.clientX, t.clientY);
+        lastMouseMoveTime = performance.now();
+      }
     }
     function onResize() {
       resize();
@@ -241,13 +282,27 @@ export function MeshWallpaper() {
 
     let raf = 0;
     const startMs = performance.now();
+    let idleFrameCount = 0;
 
     function render() {
       raf = 0;
-      const t = (performance.now() - startMs) / 1000;
+      const now = performance.now();
+      const t = (now - startMs) / 1000;
 
       mouseSmooth.x += (mouseTarget.x - mouseSmooth.x) * 0.06;
       mouseSmooth.y += (mouseTarget.y - mouseSmooth.y) * 0.06;
+
+      // When mouse has been idle >2s, drop to ~15fps for ambient-only rendering
+      const isMouseIdle = now - lastMouseMoveTime > 2000;
+      if (isMouseIdle) {
+        idleFrameCount++;
+        if (idleFrameCount % 4 !== 0) {
+          raf = requestAnimationFrame(render);
+          return;
+        }
+      } else {
+        idleFrameCount = 0;
+      }
 
       gl!.clearColor(0, 0, 0, 0);
       gl!.clear(gl!.COLOR_BUFFER_BIT);
@@ -261,6 +316,7 @@ export function MeshWallpaper() {
       gl!.uniform3f(u.accent, colors.accent[0], colors.accent[1], colors.accent[2]);
       gl!.uniform1f(u.tintStrength, colors.tintStrength);
       gl!.uniform1f(u.spotStrength, colors.spotStrength);
+      gl!.uniform1f(u.particleAlpha, colors.particleAlpha);
 
       gl!.drawArrays(gl!.TRIANGLES, 0, 3);
 

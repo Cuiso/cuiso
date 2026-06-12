@@ -44,11 +44,13 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <>
       <Nav />
-      <article className="mx-auto max-w-3xl px-4 py-16 md:px-6">
-        <header className="border-b border-ink/10 pb-8 dark:border-ink/15">
-          <h1 className="text-3xl font-bold text-ink">{fm.title}</h1>
-          <p className="mt-2 text-muted">{fm.description}</p>
-          <p className="mt-4 font-mono text-[0.65rem] uppercase tracking-wider text-primary">
+      <article className="mx-auto max-w-2xl px-5 py-16">
+        <header className="border-b border-hairline pb-8">
+          <h1 className="text-[28px] font-bold tracking-tight text-ink">
+            {fm.title}
+          </h1>
+          <p className="mt-2 text-ash">{fm.description}</p>
+          <p className="mt-4 font-mono text-[12px] text-ash">
             {t("posted")}: {fm.date}
           </p>
         </header>
@@ -56,7 +58,7 @@ export default async function BlogPostPage({ params }: Props) {
         <p className="mt-12">
           <Link
             href="/blog"
-            className="inline-flex rounded-md border border-ink/15 bg-gradient-to-b from-surface-card to-surface px-3 py-2 text-sm font-semibold text-ink shadow-[var(--shadow-raised)] dark:border-ink/25 focus-skeuo"
+            className="text-[14px] font-medium text-ash transition-colors hover:text-ink focus-ring"
           >
             {t("title")}
           </Link>

@@ -1,8 +1,15 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { SkeuoCard } from "@/components/skeuo/Card";
 import { experience } from "@/data/experience";
+
+const initials = (s: string) =>
+  s
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
 export function ExperienceSection() {
   const t = useTranslations("experience");
@@ -10,33 +17,32 @@ export function ExperienceSection() {
   const loc = locale as "es" | "en";
 
   return (
-    <section
-      id="experience"
-      className="scroll-mt-28 border-y border-ink/10 py-20 dark:border-ink/15"
-    >
-      <div className="mx-auto max-w-6xl px-4 md:px-6">
-        <h2 className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted">
+    <section id="experience" className="scroll-mt-20 py-12">
+      <div className="mx-auto max-w-2xl px-5">
+        <h2 className="text-[22px] font-bold tracking-tight text-ink">
           {t("title")}
         </h2>
-        <div className="relative mt-10 space-y-8 md:pl-8">
-          <div
-            className="absolute left-2 top-2 hidden h-[calc(100%-1rem)] w-px bg-gradient-to-b from-primary via-tertiary to-secondary md:block"
-            aria-hidden
-          />
+        <div className="mt-6 space-y-4">
           {experience.map((role) => (
-            <SkeuoCard key={role.id} className="relative md:ml-4">
-              <span className="absolute -left-6 top-6 hidden h-3 w-3 rounded-full border border-primary bg-surface shadow-[var(--shadow-raised)] md:inline-block" />
-              <p className="font-mono text-[0.65rem] uppercase tracking-wider text-secondary">
-                {role.period[loc]}
-              </p>
-              <h3 className="mt-1 text-xl font-bold text-ink">{role.title[loc]}</h3>
-              <p className="text-sm font-semibold text-muted">{role.company}</p>
-              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-ink/85">
+            <div
+              key={role.id}
+              data-reveal
+              className="relative rounded-2xl bg-surface-card p-6 pl-16"
+            >
+              <span className="absolute left-5 top-6 flex h-9 w-9 items-center justify-center rounded-full bg-white text-[11px] font-semibold text-ink">
+                {initials(role.company)}
+              </span>
+              <p className="text-[13px] italic text-ash">{role.period[loc]}</p>
+              <h3 className="mt-1 text-[16px] font-semibold tracking-tight text-ink">
+                {role.title[loc]}{" "}
+                <span className="font-normal text-ash">· {role.company}</span>
+              </h3>
+              <ul className="mt-3 list-disc space-y-1.5 pl-4 text-[14px] leading-relaxed text-ash">
                 {role.bullets[loc].map((b, bi) => (
                   <li key={`${role.id}-${bi}`}>{b}</li>
                 ))}
               </ul>
-            </SkeuoCard>
+            </div>
           ))}
         </div>
       </div>

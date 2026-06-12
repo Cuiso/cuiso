@@ -15,26 +15,33 @@ export function SectionReveal({ children }: Props) {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const section = wrapRef.current?.querySelector("section");
-        if (!section) return;
+        const el = wrapRef.current;
+        if (!el) return;
 
-        const container = section.querySelector<HTMLElement>(":scope > div");
-        if (!container) return;
+        const cards = el.querySelectorAll<HTMLElement>("[data-reveal]");
+        if (!cards.length) return;
 
-        const items = Array.from(container.children);
+        gsap.set(cards, { y: 14, autoAlpha: 0 });
 
-        gsap.from(items, {
-          y: 36,
-          autoAlpha: 0,
-          duration: 0.7,
-          stagger: 0.1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 82%",
-            once: true,
-          },
+        ScrollTrigger.batch(cards, {
+          start: "top 88%",
+          onEnter: (batch) =>
+            gsap.to(batch, {
+              y: 0,
+              autoAlpha: 1,
+              duration: 0.5,
+              ease: "power2.out",
+              stagger: 0.06,
+              overwrite: true,
+            }),
         });
+      });
+
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        const el = wrapRef.current;
+        if (!el) return;
+        const cards = el.querySelectorAll<HTMLElement>("[data-reveal]");
+        gsap.set(cards, { autoAlpha: 1, y: 0 });
       });
 
       return () => mm.revert();
@@ -42,9 +49,7 @@ export function SectionReveal({ children }: Props) {
     { scope: wrapRef },
   );
 
-  // Thin wrapper — no style impact, just provides the ref
   return <div ref={wrapRef}>{children}</div>;
 }
 
-// Re-export ScrollTrigger so callers can refresh if needed
 export { ScrollTrigger };

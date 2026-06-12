@@ -15,26 +15,27 @@ export function getSkillGroups(locale: Locale) {
       key: "ai" as const,
       title: l.ai,
       items: [
-        "Python · PyTorch · TensorFlow · LangChain · LangGraph · Pinecone",
-        "LLM · RAG · Whisper / WhisperX · Docling · OCR (Tesseract)",
-        "Visión por computadora · evaluación de prompts",
+        "LLMs (OpenAI · Anthropic · Gemini · Mistral) · LangChain · LangGraph",
+        "Sistemas multiagente · RAG · embeddings · Pinecone · guardrails · AI FinOps",
+        "WhisperX · Microsoft Presidio · PyTorch · TensorFlow · YOLO · OCR",
       ],
     },
     {
       key: "cloud" as const,
       title: l.cloud,
       items: [
-        "AWS · Azure · GCP",
-        "Docker · Terraform · CI/CD · Spark (ETL)",
+        "AWS · GCP · Azure — productivización multi-cloud",
+        "Managed AI: Bedrock · Bedrock Data Automation",
+        "Terraform · Docker · CI/CD · Airflow · Grafana",
       ],
     },
     {
       key: "software" as const,
       title: l.software,
       items: [
-        "Java · C++ · JavaScript · TypeScript",
-        "FastAPI · Flask · Express.js · Next.js · React · Angular",
-        "MySQL · PostgreSQL · MongoDB · SQLite",
+        "Python · Java · TypeScript · JavaScript · C++",
+        "FastAPI · Flask · Express.js · Next.js · React · Flutter",
+        "PostgreSQL · MySQL · MongoDB · SQL avanzado · Power BI",
       ],
     },
     {
@@ -42,12 +43,14 @@ export function getSkillGroups(locale: Locale) {
       title: l.design,
       items: [
         locale === "es"
-          ? "UX/UI (proyectos web y producto)"
-          : "UX/UI (web and product work)",
+          ? "Design Engineering: sistemas de diseño y UX/UI para herramientas internas"
+          : "Design Engineering: design systems and UX/UI for internal tools",
         locale === "es"
-          ? "Prototipado y escritura de experiencia"
-          : "Prototyping and UX writing",
-        locale === "es" ? "Inglés C1" : "English C1",
+          ? "AI-first development: rules, skills y agentes de código"
+          : "AI-first development: rules, skills, and coding agents",
+        locale === "es"
+          ? "Español nativo · Inglés C1 (lectura/escritura)"
+          : "Spanish native · English C1 (reading/writing)",
       ],
     },
   ];

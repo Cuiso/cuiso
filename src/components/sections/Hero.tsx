@@ -12,7 +12,6 @@ export function HeroSection() {
     <HeroClient
       greeting={t("greeting")}
       fullName={profile.name}
-      handle={profile.handle}
       roleLabels={[
         tSkills("ai"),
         tSkills("cloud"),
