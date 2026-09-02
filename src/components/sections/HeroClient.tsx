@@ -32,7 +32,7 @@ const NAME_SLOTS = [
 const NAME_GAP_EM = "0.28em";
 
 const MORPH_SCROLL = {
-  end: "+=2400",
+  end: "+=1700",
   /** Seconds for the timeline to ease toward the scroll position; higher = softer on fast wheel. */
   scrub: 2,
   anticipatePin: 1,
@@ -51,14 +51,14 @@ const MORPH_PHASE_GAP = 0.1;
  * Per-letter fade: `each` ≈ `duration` so letters don’t all dissolve at once (scrub).
  * Rodriguez: strict sequence (no inter-letter overlap — smoother scrub reverse).
  */
-const MORPH_LETTER_RODRIGUEZ = { duration: 0.2, each: 0.2 } as const;
+const MORPH_LETTER_RODRIGUEZ = { duration: 0.08, each: 0.08 } as const;
 /** Ease for Angelo/Rodriguez letter fades and wrap width (softer than linear under scrub). */
 const MORPH_SURNAME_EASE = "sine.inOut";
 
 const MORPH_SCRAMBLE_SLOT_STAGGER = 0.12;
 
 const MORPH_DUR = {
-  wrapCollapse: 0.35,
+  wrapCollapse: 0.16,
   namePadding: 0.5,
   scramble: 0.65,
   settle: 0.3,
