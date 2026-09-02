@@ -55,16 +55,11 @@ const MORPH_WRAP_OVERLAP_INTO_LETTERS = 0.2;
 
 /**
  * Per-letter fade: `each` ≈ `duration` so letters don’t all dissolve at once (scrub).
- * Both surnames: strict sequence (no inter-letter overlap — smoother scrub reverse).
+ * Rodriguez: strict sequence (no inter-letter overlap — smoother scrub reverse).
  */
-const MORPH_LETTER_ANGELO = { duration: 0.22, each: 0.22 } as const;
 const MORPH_LETTER_RODRIGUEZ = { duration: 0.2, each: 0.2 } as const;
 /** Ease for Angelo/Rodriguez letter fades and wrap width (softer than linear under scrub). */
 const MORPH_SURNAME_EASE = "sine.inOut";
-
-/** Deltas after `namePadding` start (unchanged feel vs previous timeline). */
-const MORPH_SETTLE_AFTER_NAME_PADDING = 0.65;
-const MORPH_MONO_O_AFTER_SETTLE = 0.35;
 
 const MORPH_SCRAMBLE_SLOT_STAGGER = 0.12;
 
@@ -73,7 +68,6 @@ const MORPH_DUR = {
   namePadding: 0.5,
   scramble: 0.65,
   settle: 0.3,
-  monoO: 0.4,
 } as const;
 
 function letterStaggerSpan(
@@ -91,36 +85,30 @@ function buildMorphTimes() {
   const idle = MORPH_IDLE_PAD;
   const overlap = MORPH_WRAP_OVERLAP_INTO_LETTERS;
 
-  const angSpan = letterStaggerSpan(
-    ANGELO_CHARS.length,
-    MORPH_LETTER_ANGELO.each,
-    MORPH_LETTER_ANGELO.duration,
-  );
-  const tAngeloChars = idle;
-  const tAngeloWrap = idle + angSpan - overlap;
-  const afterAngeloWrap = tAngeloWrap + w;
-
   const rodSpan = letterStaggerSpan(
     RODRIGUEZ_CHARS.length,
     MORPH_LETTER_RODRIGUEZ.each,
     MORPH_LETTER_RODRIGUEZ.duration,
   );
-  const tRodriguezChars = afterAngeloWrap + g;
+  const tRodriguezChars = idle;
   const tRodriguezWrap = tRodriguezChars + rodSpan - overlap;
   const afterRodWrap = tRodriguezWrap + w;
 
-  const tNamePadding = afterRodWrap + g;
-  const tSettle = tNamePadding + MORPH_SETTLE_AFTER_NAME_PADDING;
-  const tMonoO = tSettle + MORPH_MONO_O_AFTER_SETTLE;
+  // Join: collapse inter-word gaps while the whole word scrambles "Luis Angelo"
+  // → "cuisangelo" in one continuous left-to-right sweep.
+  const tJoin = afterRodWrap + g;
+  const scrambleSpan =
+    (NAME_SLOTS.length + ANGELO_CHARS.length - 1) *
+      MORPH_SCRAMBLE_SLOT_STAGGER +
+    MORPH_DUR.scramble;
+  // Settle scale finishes as the last letter resolves.
+  const tSettle = tJoin + scrambleSpan - MORPH_DUR.settle;
 
   return {
-    tAngeloChars,
-    tAngeloWrap,
     tRodriguezChars,
     tRodriguezWrap,
-    tNamePadding,
+    tJoin,
     tSettle,
-    tMonoO,
   };
 }
 
@@ -155,8 +143,6 @@ export function HeroClient({
   const angeloCharRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const rodriguezWrapRef = useRef<HTMLSpanElement>(null);
   const rodriguezCharRefs = useRef<Array<HTMLSpanElement | null>>([]);
-
-  const oWrapRef = useRef<HTMLSpanElement>(null);
 
   const handleRef = useRef<HTMLParagraphElement>(null);
   const roleTextRef = useRef<HTMLSpanElement>(null);
@@ -217,12 +203,21 @@ export function HeroClient({
               fontFamily: "var(--font-mono, ui-monospace, monospace)",
             });
             nameSlots.forEach((el) => el.classList.add("text-primary"));
-            gsap.set([angeloWrapRef.current, rodriguezWrapRef.current], {
+            const firstAngelo = angeloChars[0];
+            if (firstAngelo) firstAngelo.textContent = "a";
+            gsap.set(angeloChars, { autoAlpha: 1 });
+            gsap.set(angeloWrapRef.current, {
+              autoAlpha: 1,
+              paddingRight: 0,
+              fontFamily: "var(--font-mono, ui-monospace, monospace)",
+              fontWeight: 700,
+            });
+            angeloWrapRef.current?.classList.add("text-primary");
+            gsap.set(rodriguezWrapRef.current, {
               autoAlpha: 0,
               display: "none",
             });
             gsap.set(nameWrapRef.current, { paddingRight: 0 });
-            gsap.set(oWrapRef.current, { autoAlpha: 1 });
             return;
           }
 
@@ -242,8 +237,6 @@ export function HeroClient({
           gsap.set([...angeloChars, ...rodriguezChars], {
             autoAlpha: 0,
           });
-
-          gsap.set(oWrapRef.current, { autoAlpha: 0 });
 
           const entrance = gsap.timeline({
             defaults: { ease: "expo.out" },
@@ -370,23 +363,20 @@ export function HeroClient({
           });
 
           let rodriguezWrapFullWidth = 0;
-          let angeloWrapFullWidth = 0;
 
           // Until true, morph progress stays 0 (avoids ST + scroll restoration during intro).
           let entranceFinished = false;
 
           /**
-           * Measure natural wrap widths without touching morph timeline progress.
-           * Temporarily forcing progress to 0 (old approach) changes layout height and
-           * breaks ScrollTrigger when scrolling back up past the pin.
+           * Measure the natural Rodriguez wrap width without touching morph timeline
+           * progress. Temporarily forcing progress to 0 (old approach) changes layout
+           * height and breaks ScrollTrigger when scrolling back up past the pin.
            */
-          function captureSurnameWrapWidths() {
+          function captureRodriguezWrapWidth() {
             const rod = rodriguezWrapRef.current;
-            const ang = angeloWrapRef.current;
-            if (!rod || !ang) return;
-            gsap.set([rod, ang], { clearProps: "width,maxWidth" });
+            if (!rod) return;
+            gsap.set(rod, { clearProps: "width,maxWidth" });
             rodriguezWrapFullWidth = rod.offsetWidth;
-            angeloWrapFullWidth = ang.offsetWidth;
           }
 
           function addMorphWrapCollapse(
@@ -433,32 +423,59 @@ export function HeroClient({
 
           entrance.eventCallback("onComplete", () => {
             entranceFinished = true;
-            captureSurnameWrapWidths();
+            captureRodriguezWrapWidth();
             ScrollTrigger.refresh();
           });
 
-          if (angeloChars.length) {
+          // "Angelo" stays as the brand suffix: drop the gap so it joins "cuis",
+          // then scramble + restyle each letter with the same distortion as the
+          // name, so "Luis Angelo" resolves into "cuisangelo" in one sweep.
+          if (angeloWrapRef.current) {
             morphTl.fromTo(
-              angeloChars,
-              { autoAlpha: 1 },
+              angeloWrapRef.current,
+              { paddingRight: NAME_GAP_EM },
               {
-                autoAlpha: 0,
-                duration: MORPH_LETTER_ANGELO.duration,
-                stagger: { each: MORPH_LETTER_ANGELO.each, from: "end" },
-                ease: MORPH_SURNAME_EASE,
+                paddingRight: 0,
+                duration: MORPH_DUR.namePadding,
+                ease: "power2.inOut",
                 immediateRender: false,
               },
-              MORPH_T.tAngeloChars,
+              MORPH_T.tJoin,
             );
           }
-          if (angeloWrapRef.current) {
-            addMorphWrapCollapse(
-              morphTl,
-              angeloWrapRef.current,
-              () => angeloWrapFullWidth,
-              MORPH_T.tAngeloWrap,
+          angeloChars.forEach((ch, i) => {
+            // Continue the name's stagger so the whole word sweeps left to right.
+            const start =
+              MORPH_T.tJoin +
+              (nameSlots.length + i) * MORPH_SCRAMBLE_SLOT_STAGGER;
+            morphTl.to(
+              ch,
+              {
+                duration: MORPH_DUR.scramble,
+                ease: "none",
+                scrambleText: {
+                  text: ANGELO_CHARS[i]?.toLowerCase() ?? "",
+                  chars: "upperAndLowerCase",
+                  speed: 0.6,
+                  revealDelay: 0,
+                },
+              },
+              start,
             );
-          }
+            morphTl.to(
+              ch,
+              {
+                fontFamily:
+                  "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)",
+                fontWeight: 700,
+                duration: MORPH_DUR.scramble,
+                ease: "power2.inOut",
+                onComplete: () => ch.classList.add("text-primary"),
+                onReverseComplete: () => ch.classList.remove("text-primary"),
+              },
+              start,
+            );
+          });
 
           if (rodriguezChars.length) {
             morphTl.fromTo(
@@ -493,14 +510,13 @@ export function HeroClient({
                 ease: "power2.inOut",
                 immediateRender: false,
               },
-              MORPH_T.tNamePadding,
+              MORPH_T.tJoin,
             );
           }
           nameSlots.forEach((slot, i) => {
             const target = NAME_SLOTS[i];
             if (!target) return;
-            const start =
-              MORPH_T.tNamePadding + i * MORPH_SCRAMBLE_SLOT_STAGGER;
+            const start = MORPH_T.tJoin + i * MORPH_SCRAMBLE_SLOT_STAGGER;
             morphTl.to(
               slot,
               {
@@ -531,7 +547,7 @@ export function HeroClient({
           });
 
           morphTl.fromTo(
-            nameSlots,
+            [...nameSlots, ...angeloChars],
             { scale: 1.04 },
             {
               scale: 1,
@@ -542,23 +558,11 @@ export function HeroClient({
             MORPH_T.tSettle,
           );
 
-          morphTl.fromTo(
-            oWrapRef.current,
-            { autoAlpha: 0 },
-            {
-              autoAlpha: 1,
-              duration: MORPH_DUR.monoO,
-              ease: "power2.out",
-              immediateRender: false,
-            },
-            MORPH_T.tMonoO,
-          );
-
           if (typeof document !== "undefined" && "fonts" in document) {
             document.fonts.ready.then(() => {
               if (!entranceFinished) return;
               // Only remeasure if still at morph start — else avoid layout thrash.
-              if (morphTl.progress() <= 0.01) captureSurnameWrapWidths();
+              if (morphTl.progress() <= 0.01) captureRodriguezWrapWidth();
               ScrollTrigger.refresh();
             });
           }
@@ -669,14 +673,6 @@ export function HeroClient({
                     {ch}
                   </span>
                 ))}
-              </span>
-
-              <span
-                ref={oWrapRef}
-                className="inline-block opacity-0 font-mono font-bold text-primary will-change-transform"
-                aria-hidden="true"
-              >
-                o
               </span>
             </span>
           </h1>
