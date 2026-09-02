@@ -67,7 +67,7 @@ void main(){
 
   // ── Particles ──────────────────────────────────────────────────────
   float particles = 0.0;
-  const int N = 60;
+  const int N = 30;
   for (int i = 0; i < N; i++) {
     vec2 seed = vec2(float(i) * 1.73, float(i) * 2.91);
     vec2 rng = hash2(seed);
@@ -220,7 +220,9 @@ export function MeshWallpaper() {
     }
 
     const isMobile = window.matchMedia("(pointer: coarse)").matches;
-    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.0 : 1.5);
+    // Background is a soft gradient with faint particles — CSS upscales the
+    // backing store, so sub-native resolution is imperceptible and far cheaper.
+    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 0.75 : 1.0);
     function resize() {
       const w = Math.floor(window.innerWidth * dpr);
       const h = Math.floor(window.innerHeight * dpr);

@@ -147,7 +147,6 @@
     inset: 0;
     z-index: -2;
     pointer-events: none;
-    will-change: transform;
     contain: paint;
     background-image:
       radial-gradient(60% 50% at 12% 18%, var(--mesh-blob-primary), transparent 70%),
