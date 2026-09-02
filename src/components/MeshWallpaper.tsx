@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+const PARTICLE_COUNT = 30;
+
 const VERT = `#version 300 es
 precision highp float;
 out vec2 vUv;
@@ -20,6 +22,8 @@ precision highp float;
 in vec2 vUv;
 out vec4 fragColor;
 
+const int PARTICLE_COUNT = ${PARTICLE_COUNT};
+
 uniform vec2 uResolution;
 uniform vec2 uMouse;
 uniform float uTime;
@@ -31,13 +35,7 @@ uniform float uTintStrength;
 uniform float uSpotStrength;
 uniform float uParticleAlpha;
 
-// Pseudo-random helpers
-float hash(vec2 p) {
-  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
-}
-vec2 hash2(vec2 p) {
-  return vec2(hash(p), hash(p + vec2(37.0, 91.0)));
-}
+uniform vec4 uParticles[PARTICLE_COUNT];
 
 void main(){
   vec2 res = uResolution;
@@ -65,37 +63,15 @@ void main(){
 
   vec3 col = mix(base, uColorAccent, spot * uSpotStrength);
 
-  // ── Particles ──────────────────────────────────────────────────────
+  // ── Particles ─────────────────────────────────────────────────────────
+  // Position, radius and mouse-driven brightness are identical for every
+  // pixel, so they arrive as uniforms; only the distance to the pixel is
+  // per-pixel work.
   float particles = 0.0;
-  const int N = 30;
-  for (int i = 0; i < N; i++) {
-    vec2 seed = vec2(float(i) * 1.73, float(i) * 2.91);
-    vec2 rng = hash2(seed);
-
-    // Base position: spread across the viewport
-    vec2 pp = (rng - 0.5) * aspect * 1.6;
-
-    // Gentle ambient drift
-    float spd = 0.08 + rng.x * 0.06;
-    pp.x += sin(t * spd + rng.y * 6.28) * 0.15;
-    pp.y += cos(t * spd * 0.7 + rng.x * 6.28) * 0.10;
-
-    // Mouse attraction — particles drift toward cursor
-    vec2 toMouse = m - pp;
-    float mouseDist = length(toMouse);
-    float attraction = exp(-mouseDist * 1.8) * 0.35;
-    pp += toMouse * attraction;
-
-    // Particle glow — larger radius for visible dots
-    float d = length(p - pp);
-    float radius = 0.012 + rng.y * 0.010;
-    float glow = radius / (d * d + radius);
-
-    // Brighten particles near mouse
-    float nearMouse = exp(-mouseDist * 2.5);
-    glow *= 0.5 + nearMouse * 2.0;
-
-    particles += glow;
+  for (int i = 0; i < PARTICLE_COUNT; i++) {
+    vec4 pt = uParticles[i];
+    vec2 dv = p - pt.xy;
+    particles += pt.w / (dot(dv, dv) + pt.z);
   }
 
   particles = clamp(particles * 0.025, 0.0, 1.0);
@@ -104,6 +80,12 @@ void main(){
 
   fragColor = vec4(col, 1.0);
 }`;
+
+/** The shader's former `hash()`, so the particle field keeps its distribution. */
+function glslHash(x: number, y: number): number {
+  const v = Math.sin(x * 127.1 + y * 311.7) * 43758.5453123;
+  return v - Math.floor(v);
+}
 
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace("#", "").trim();
@@ -179,10 +161,50 @@ export function MeshWallpaper() {
       tintStrength: gl.getUniformLocation(program, "uTintStrength"),
       spotStrength: gl.getUniformLocation(program, "uSpotStrength"),
       particleAlpha: gl.getUniformLocation(program, "uParticleAlpha"),
+      particles: gl.getUniformLocation(program, "uParticles[0]"),
     };
 
     const mouseTarget = { x: 0.5, y: 0.5 };
     const mouseSmooth = { x: 0.5, y: 0.5 };
+
+    const seeds = new Float32Array(PARTICLE_COUNT * 2);
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      seeds[i * 2] = glslHash(i * 1.73, i * 2.91);
+      seeds[i * 2 + 1] = glslHash(i * 1.73 + 37, i * 2.91 + 91);
+    }
+    const particleData = new Float32Array(PARTICLE_COUNT * 4);
+
+    function updateParticles(t: number) {
+      const shorter = Math.min(canvas.width, canvas.height);
+      const aspectX = canvas.width / shorter;
+      const aspectY = canvas.height / shorter;
+      const mx = (mouseSmooth.x - 0.5) * aspectX;
+      const my = (mouseSmooth.y - 0.5) * aspectY;
+
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const rx = seeds[i * 2]!;
+        const ry = seeds[i * 2 + 1]!;
+        const spd = 0.08 + rx * 0.06;
+
+        let px = (rx - 0.5) * aspectX * 1.6 + Math.sin(t * spd + ry * 6.28) * 0.15;
+        let py = (ry - 0.5) * aspectY * 1.6 + Math.cos(t * spd * 0.7 + rx * 6.28) * 0.1;
+
+        const dx = mx - px;
+        const dy = my - py;
+        const mouseDist = Math.hypot(dx, dy);
+        const attraction = Math.exp(-mouseDist * 1.8) * 0.35;
+        px += dx * attraction;
+        py += dy * attraction;
+
+        const radius = 0.012 + ry * 0.01;
+        const brightness = 0.5 + Math.exp(-mouseDist * 2.5) * 2.0;
+
+        particleData[i * 4] = px;
+        particleData[i * 4 + 1] = py;
+        particleData[i * 4 + 2] = radius;
+        particleData[i * 4 + 3] = radius * brightness;
+      }
+    }
 
     let colors = readColors();
 
@@ -319,6 +341,8 @@ export function MeshWallpaper() {
       gl!.uniform1f(u.tintStrength, colors.tintStrength);
       gl!.uniform1f(u.spotStrength, colors.spotStrength);
       gl!.uniform1f(u.particleAlpha, colors.particleAlpha);
+      updateParticles(t);
+      gl!.uniform4fv(u.particles, particleData);
 
       gl!.drawArrays(gl!.TRIANGLES, 0, 3);
 
