@@ -360,7 +360,6 @@ export function HeroClient({
 
           let rodriguezWrapFullWidth = 0;
 
-          // Until true, morph progress stays 0 (avoids ST + scroll restoration during intro).
           let entranceFinished = false;
 
           /**
@@ -412,16 +411,26 @@ export function HeroClient({
               anticipatePin: MORPH_SCROLL.anticipatePin,
               invalidateOnRefresh: true,
               onUpdate: () => {
-                if (!entranceFinished) morphTl.progress(0);
+                // Both timelines write autoAlpha on the same letters, and per tick
+                // the last writer wins — the word ends up with holes in it. Holding
+                // morph progress at 0 does not help: that applies the morph's own
+                // "from" state. Hand the letters over by ending the intro outright.
+                if (!entranceFinished) {
+                  entrance.seek(entrance.duration(), false);
+                  finishEntrance();
+                }
               },
             },
           });
 
-          entrance.eventCallback("onComplete", () => {
+          function finishEntrance() {
+            if (entranceFinished) return;
             entranceFinished = true;
             captureRodriguezWrapWidth();
             ScrollTrigger.refresh();
-          });
+          }
+
+          entrance.eventCallback("onComplete", finishEntrance);
 
           // "Angelo" stays as the brand suffix: drop the gap so it joins "cuis",
           // then scramble + restyle each letter with the same distortion as the
