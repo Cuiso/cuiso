@@ -48,12 +48,6 @@ const MORPH_IDLE_PAD = 0.02;
 const MORPH_PHASE_GAP = 0.1;
 
 /**
- * Start wrap width slightly before the letter stagger ends so scrub reverse isn’t
- * “empty box expands, then letters pop in”.
- */
-const MORPH_WRAP_OVERLAP_INTO_LETTERS = 0.2;
-
-/**
  * Per-letter fade: `each` ≈ `duration` so letters don’t all dissolve at once (scrub).
  * Rodriguez: strict sequence (no inter-letter overlap — smoother scrub reverse).
  */
@@ -83,7 +77,6 @@ function buildMorphTimes() {
   const w = MORPH_DUR.wrapCollapse;
   const g = MORPH_PHASE_GAP;
   const idle = MORPH_IDLE_PAD;
-  const overlap = MORPH_WRAP_OVERLAP_INTO_LETTERS;
 
   const rodSpan = letterStaggerSpan(
     RODRIGUEZ_CHARS.length,
@@ -91,7 +84,10 @@ function buildMorphTimes() {
     MORPH_LETTER_RODRIGUEZ.duration,
   );
   const tRodriguezChars = idle;
-  const tRodriguezWrap = tRodriguezChars + rodSpan - overlap;
+  // The wrap collapse ends exactly as the last letter finishes fading. Ending it
+  // any later leaves a wide, empty box that shoves the name off-centre until it
+  // snaps back — visible whenever scrub leaves the playhead inside that window.
+  const tRodriguezWrap = tRodriguezChars + rodSpan - w;
   const afterRodWrap = tRodriguezWrap + w;
 
   // Join: collapse inter-word gaps while the whole word scrambles "Luis Angelo"
